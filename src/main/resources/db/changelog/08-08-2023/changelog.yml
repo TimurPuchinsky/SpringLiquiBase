@@ -1,0 +1,187 @@
+databaseChangeLog:
+  - changeSet:
+      id: DEV-2
+      author: Puchinsky
+      changes:
+        - createTable:
+            tableName: Dictionary
+            remarks: Словари
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: dictionary_pk
+                    nullable: false
+              - column:
+                  name: languageFrom
+                  type: Integer
+                  remarks: Язык_слов
+                  constraints:
+                    nullable: false
+              - column:
+                  name: languageTo
+                  type: Integer
+                  remarks: Язык_перевода
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: Word
+            remarks: Слова
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: word_pk
+                    nullable: false
+              - column:
+                  name: word
+                  type: varchar(200)
+                  remarks: Слово
+                  constraints:
+                    nullable: false
+              - column:
+                  name: language
+                  type: Integer
+                  remarks: Язык
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: Language
+            remarks: Языки
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: language_pk
+                    nullable: false
+              - column:
+                  name: language
+                  type: varchar(200)
+                  remarks: Язык
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: Translate
+            remarks: Перевод
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: translate_pk
+                    nullable: false
+              - column:
+                  name: wordFrom
+                  type: Integer
+                  remarks: СловоДо
+                  constraints:
+                    nullable: false
+              - column:
+                  name: wordTo
+                  type: Integer
+                  remarks: СловоПосле
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dictionary
+                  type: Integer
+                  remarks: Словарь
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: DEV-3
+      author: Puchinsky
+      failOnError: true
+      comment: Добавление внешнего ключа
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: dictionary
+            baseTableName: Translate
+            constraintName: fk_translate_dictionary_to_dictionary
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: Dictionary
+
+  - changeSet:
+      id: DEV-4
+      author: Puchinsky
+      failOnError: true
+      comment: Добавление остальных внешних ключей
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: languageFrom
+            baseTableName: Dictionary
+            constraintName: fk_dictionary_languageFrom_to_language
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: Language
+
+        - addForeignKeyConstraint:
+            baseColumnNames: languageTo
+            baseTableName: Dictionary
+            constraintName: fk_dictionary_languageTo_to_language
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: Language
+
+        - addForeignKeyConstraint:
+            baseColumnNames: language
+            baseTableName: Word
+            constraintName: fk_word_language_to_language
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: Language
+
+  - changeSet:
+      id: DEV-5
+      author: Puchinsky
+      failOnError: true
+      comment: Изменение названий столбцов
+      changes:
+        - renameColumn:
+            tableName: Translate
+            oldColumnName: wordFrom
+            newColumnName: wordFrom_id
+        - renameColumn:
+            tableName: Translate
+            oldColumnName: wordTo
+            newColumnName: wordTo_id
+        - renameColumn:
+            tableName: Word
+            oldColumnName: language
+            newColumnName: language_id
+        - renameColumn:
+            tableName: Dictionary
+            oldColumnName: languageFrom
+            newColumnName: languageFrom_id
+        - renameColumn:
+            tableName: Dictionary
+            oldColumnName: languageTo
+            newColumnName: languageTo_id

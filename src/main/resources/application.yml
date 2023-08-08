@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: "91324576TTT"
+  jpa:
+    properties:
+        database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+        show_sql: false
+        temp:
+          use_jdbc_metadata_defaults: false
+  liquibase:
+    change-log: classpath:db/changelog/08-08-2023/changelog.yml
