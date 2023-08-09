@@ -1,0 +1,2 @@
+entity-packages: com.example.springliquidbase.infrastructure
+transactional-packages: com.example.springliquidbase.api

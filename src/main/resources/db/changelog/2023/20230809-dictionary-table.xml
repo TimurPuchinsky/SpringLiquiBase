@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20230809-dictionary-table-1.xml" author="admin">
+        <insert tableName="Language">
+            <column  name="language"  value="English"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="20230809-dictionary-table-2.xml" author="admin">
+        <renameColumn  newColumnName="wordFrom_id"
+                       oldColumnName="wordFrom"
+                       tableName="Translate"/>
+        <renameColumn  newColumnName="wordTo_id"
+                       oldColumnName="wordTo"
+                       tableName="Translate"/>
+        <renameColumn  newColumnName="dictionary_id"
+                       oldColumnName="dictionary"
+                       tableName="Translate"/>
+        <renameColumn  newColumnName="languageFrom_id"
+                       oldColumnName="languageFrom"
+                       tableName="Dictionary"/>
+        <renameColumn  newColumnName="languageTo_id"
+                       oldColumnName="languageTo"
+                       tableName="Dictionary"/>
+        <renameColumn  newColumnName="language_id"
+                       oldColumnName="language"
+                       tableName="Word"/>
+        <addForeignKeyConstraint  baseColumnNames="wordFrom_id"
+                                  baseTableName="Translate"
+                                  constraintName="fk_translate_wordFrom_to_word"
+                                  deferrable="false"
+                                  initiallyDeferred="false"
+                                  onDelete="RESTRICT"
+                                  onUpdate="RESTRICT"
+                                  referencedColumnNames="id"
+                                  referencedTableName="Word"
+                                  validate="true"/>
+        <addForeignKeyConstraint  baseColumnNames="wordTo_id"
+                                  baseTableName="Translate"
+                                  constraintName="fk_translate_wordTo_to_word"
+                                  deferrable="false"
+                                  initiallyDeferred="false"
+                                  onDelete="RESTRICT"
+                                  onUpdate="RESTRICT"
+                                  referencedColumnNames="id"
+                                  referencedTableName="Word"
+                                  validate="true"/>
+    </changeSet>
+</databaseChangeLog>

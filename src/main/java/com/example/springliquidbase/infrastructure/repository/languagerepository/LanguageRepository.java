@@ -1,4 +1,4 @@
-package com.example.springliquidbase.infrastructure.languageRepository;
+package com.example.springliquidbase.infrastructure.repository.languagerepository;
 
 import org.springframework.stereotype.Repository;
 

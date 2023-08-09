@@ -1,4 +1,4 @@
-package com.example.springliquidbase.infrastructure.translateRepository;
+package com.example.springliquidbase.infrastructure.repository.translaterepository;
 
 import org.springframework.stereotype.Repository;
 

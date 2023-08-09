@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Language {
+public class LanguageModel {
 
-    private Integer id;
     private String language;
 }

@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Word {
+public class WordModel {
 
-    private Integer id;
     private String word;
 }

@@ -1,7 +1,6 @@
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: postgres
     password: "91324576TTT"
   jpa:
@@ -11,4 +10,4 @@ spring:
         temp:
           use_jdbc_metadata_defaults: false
   liquibase:
-    change-log: classpath:db/changelog/08-08-2023/changelog.yml
+    change-log: classpath:db/changelog/2023/20230809-language-table.xml

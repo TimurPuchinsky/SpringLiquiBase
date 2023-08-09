@@ -1,4 +1,4 @@
-package com.example.springliquidbase.infrastructure.wordRepository;
+package com.example.springliquidbase.infrastructure.repository.wordrepository;
 
 import org.springframework.stereotype.Repository;
 
