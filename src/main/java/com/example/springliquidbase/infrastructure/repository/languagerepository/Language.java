@@ -1,15 +1,23 @@
 package com.example.springliquidbase.infrastructure.repository.languagerepository;
 
-import com.example.springliquidbase.infrastructure.BaseModel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
+@Setter
+@Getter
+@Table(name = "Language")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Language extends BaseModel {
+public class Language {
 
-    private String language;
+    @Id
+    private UUID id;
+    private String name;
+
 }

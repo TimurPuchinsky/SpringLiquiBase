@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20230810-database-1.xml" author="Puchinsky">
+
+        <createTable tableName="Dictionary">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="languageFromId" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="languageToId" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="Language">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="Word">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="languageId" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="Translate">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="wordFromId" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="wordToId" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dictionaryId" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

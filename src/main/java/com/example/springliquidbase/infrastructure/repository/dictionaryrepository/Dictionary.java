@@ -1,21 +1,25 @@
 package com.example.springliquidbase.infrastructure.repository.dictionaryrepository;
 
-import com.example.springliquidbase.infrastructure.BaseModel;
 import com.example.springliquidbase.infrastructure.repository.languagerepository.Language;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
+@Setter
+@Table(name = "Dictionary")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Dictionary extends BaseModel {
+public class Dictionary {
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Language languageFrom;
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Language languageTo;
+    @Id
+    private UUID id;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Language> languageFrom_id;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Language> languageTo_id;
 }

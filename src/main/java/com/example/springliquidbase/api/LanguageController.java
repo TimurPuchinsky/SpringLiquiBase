@@ -1,25 +1,27 @@
 package com.example.springliquidbase.api;
 
-import com.example.springliquidbase.infrastructure.database.Database;
-import com.example.springliquidbase.infrastructure.repository.languagerepository.Language;
-import io.ebean.DB;
+import com.example.springliquidbase.domain.LanguageModel;
+import com.example.springliquidbase.domainservice.LanguageService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/language")
+@RestController
+@RequestMapping("/language")
 @AllArgsConstructor
 public class LanguageController {
 
-    private final Database db;
+    private final LanguageService languageService;
 
     @GetMapping("/showAll")
-    public List<Language> showLanguages(){
-        db.database();
-        return DB.find(Language.class)
-                .select("language")
-                .findList();
+    public List<LanguageModel> showLanguages(){
+        return languageService.getAll();
+    }
+
+    @PostMapping("/add")
+    public String addLanguages(@RequestBody LanguageModel languageModel){
+        languageService.createLanguage(languageModel);
+        return "add language";
     }
 }
