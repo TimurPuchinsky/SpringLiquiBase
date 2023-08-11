@@ -1,14 +1,14 @@
 package com.example.springliquidbase;
 
-import com.example.springliquidbase.infrastructure.repository.languagerepository.Language;
+import com.example.springliquidbase.infrastructure.repository.languagerepository.LanguageEntity;
 import io.ebean.DB;
 import org.junit.jupiter.api.Test;
 
-public class LanguageTest {
+public class LanguageEntityTest {
     @Test
     public void selectLanguage() {
 
-        DB.find(Language.class)
+        DB.find(LanguageEntity.class)
                 .select("language")
                 .findList();
     }

@@ -1,12 +1,12 @@
 package com.example.springliquidbase.domainservice;
 
 import com.example.springliquidbase.domain.LanguageModel;
-import com.example.springliquidbase.infrastructure.repository.languagerepository.Language;
+import com.example.springliquidbase.infrastructure.repository.languagerepository.LanguageEntity;
 import com.example.springliquidbase.infrastructure.repository.languagerepository.LanguageRepository;
 import lombok.AllArgsConstructor;
- import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Collection;
 
 @Service
 @AllArgsConstructor
@@ -14,7 +14,7 @@ public class LanguageService {
 
     private final LanguageRepository languageRepository;
 
-    public List<LanguageModel> getAll() {
+    public Collection<LanguageModel> getAll() {
         return languageRepository.findAll();
     }
 

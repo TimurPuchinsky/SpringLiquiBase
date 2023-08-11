@@ -17,10 +17,10 @@ public class Translate{
 
     @Id
     private UUID id;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Word> wordFrom_id;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Word> wordTo_id;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Dictionary> dictionary_id;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Word wordFrom_id;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Word wordTo_id;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Dictionary dictionary_id;
 }

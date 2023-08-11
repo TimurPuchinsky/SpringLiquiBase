@@ -11,10 +11,10 @@ import java.util.UUID;
 @Entity
 @Setter
 @Getter
-@Table(name = "Language")
+@Table(name = "'Language'")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Language {
+public class LanguageEntity {
 
     @Id
     private UUID id;

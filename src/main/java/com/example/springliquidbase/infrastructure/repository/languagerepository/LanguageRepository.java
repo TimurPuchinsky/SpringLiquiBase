@@ -1,40 +1,49 @@
 package com.example.springliquidbase.infrastructure.repository.languagerepository;
 
-import com.example.springliquidbase.config.DataBase;
+import com.example.springliquidbase.ServerConfig;
 import com.example.springliquidbase.domain.LanguageModel;
-import io.ebean.Database;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Repository
 public class LanguageRepository {
 
-    DataBase db = new DataBase();
-    Database database = db.database();
+    ServerConfig db = new ServerConfig();
 
-    public List<LanguageModel> findAll() {
-        List<Language> languages = database.find(Language.class)
-                .select("name")
+    public Collection<LanguageModel> findAll() {
+        List<LanguageEntity> languageEntities = db.database().find(LanguageEntity.class)
                 .findList();
 
-        LanguageModel languageModel = new LanguageModel();
-        List<LanguageModel> languageModels = new LinkedList<>();
+        return languageEntities.stream().map(this::getModel).collect(Collectors.toList());
+//
+//        LanguageModel languageModel = new LanguageModel();
+//        List<List<LanguageEntity>> languageModels = new LinkedList<>();
+//        languageModels.add(languageEntities);
+//
+////        for (Language s : languages){
+////            languageModel.setId(s.getId());
+////            languageModel.setLanguage(s.getName());
+////            languageModels.add(languageModel);
+////        }
+//        return languageModels;
+    }
 
-        for (Language s : languages){
-            languageModel.setId(s.getId());
-            languageModel.setLanguage(s.getName());
-            languageModels.add(languageModel);
-        }
-        return languageModels;
+    private LanguageModel getModel(LanguageEntity e) {
+        var model = new LanguageModel();
+        model.setLanguage(e.getName());
+        model.setId(e.getId());
+        return model;
     }
 
     public void createNewLanguage(String languageModel) {
-        var entity = new Language();
+        var entity = new LanguageEntity();
         entity.setName(languageModel);
         entity.setId(UUID.randomUUID());
-        database.insert(entity);
+        db.database().insert(entity);
     }
 }
