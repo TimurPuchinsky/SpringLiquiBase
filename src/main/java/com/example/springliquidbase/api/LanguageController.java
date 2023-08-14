@@ -2,11 +2,11 @@ package com.example.springliquidbase.api;
 
 import com.example.springliquidbase.domain.LanguageModel;
 import com.example.springliquidbase.domainservice.LanguageService;
-import com.example.springliquidbase.infrastructure.repository.languagerepository.LanguageEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/language")
@@ -19,7 +19,7 @@ public class LanguageController {
         this.languageService = languageService;
     }
 
-    @GetMapping("/showAll")
+    @GetMapping("/languages")
     public Collection<LanguageModel> showLanguages(){
         return languageService.getAll();
     }
@@ -27,6 +27,12 @@ public class LanguageController {
     @PostMapping("/add")
     public String addLanguages(@RequestBody LanguageModel languageModel){
         languageService.createLanguage(languageModel);
-        return "add language";
+        return "language added";
+    }
+
+    @PostMapping("/delete/{name}")
+    public String deleteLanguages(@PathVariable String name){
+        languageService.removeLanguage(name);
+        return "language removed";
     }
 }

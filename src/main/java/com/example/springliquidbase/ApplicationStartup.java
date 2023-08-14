@@ -10,6 +10,7 @@ import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.ResourceAccessor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,12 @@ import java.sql.SQLException;
 @Slf4j
 public class ApplicationStartup implements ApplicationListener<ContextRefreshedEvent> {
 
-    ServerConfig serverConfig = new ServerConfig();
+    private final ServerConfig serverConfig;
+
+    @Autowired
+    public ApplicationStartup(ServerConfig serverConfig) {
+        this.serverConfig = serverConfig;
+    }
 
     public void applyMigrations(DataSource server, String lbSchema, String lbChangeLog){
         ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor(getClass().getClassLoader());

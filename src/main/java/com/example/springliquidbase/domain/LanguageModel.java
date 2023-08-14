@@ -14,5 +14,5 @@ public class LanguageModel {
 
     @Id
     private UUID id;
-    private String language;
+    private String name;
 }

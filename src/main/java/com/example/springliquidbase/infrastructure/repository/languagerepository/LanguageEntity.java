@@ -16,8 +16,13 @@ import java.util.UUID;
 @NoArgsConstructor
 public class LanguageEntity {
 
-    @Id
-    private UUID id;
-    private String name;
+    public final static String ID = "id";
+    public final static String NAME = "name";
 
+    @Id
+    @Column(name = ID)
+    private UUID id;
+
+    @Column(name = NAME)
+    private String name;
 }
