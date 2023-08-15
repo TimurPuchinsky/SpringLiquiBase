@@ -52,6 +52,6 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        applyMigrations(serverConfig.database().dataSource(), "public", "db/changelog/2023/20230810-language-table.xml");
+        applyMigrations(serverConfig.database().dataSource(), serverConfig.getDbSchema(), serverConfig.getChangelog());
     }
 }

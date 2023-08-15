@@ -26,13 +26,7 @@ public class WordRepository {
         var model = new WordModel();
         model.setId(e.getId());
         model.setName(e.getName());
-
-        var languageModel = new LanguageModel();
-        languageModel.setId(e.getLanguageId().getId());
-        languageModel.setName(e.getLanguageId().getName());
-
-        model.setLanguage_Entity_id(languageModel.getId());
-
+        model.setLanguageId(e.getLanguageId());
         return model;
     }
 
@@ -41,18 +35,19 @@ public class WordRepository {
         return wordEntities.stream().map(this::getModel).collect(Collectors.toList());
     }
 
-    public void createNewWord(String wordModel, UUID languageEntityId) {
+    public void createNewWord(String word, String language) {
         var entity = new WordEntity();
         var languageEntity = db.database().find(LanguageEntity.class)
-                .where().eq(LanguageEntity.ID, languageEntityId).findOne();
+                .where().eq(LanguageEntity.NAME, language).findOne();
 
         entity.setId(UUID.randomUUID());
-        entity.setName(wordModel);
-        entity.setLanguageId(languageEntity);
+        entity.setName(word);
+        entity.setLanguageId(languageEntity.getId());
         db.database().insert(entity);
     }
 
     public void removeWordByName(String name) {
+        //var word = db.database().find(WordEntity.class).where().eq(WordEntity.NAME, name);
         db.database().find(WordEntity.class).where().eq(WordEntity.NAME, name).delete();
     }
 }

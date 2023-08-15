@@ -18,16 +18,20 @@ import java.util.UUID;
 public class DictionaryEntity {
 
     public final static String ID = "id";
+    public final static String LANGUAGEFROM_ID = "\"languageFromId\"";
+    public final static String LANGUAGETO_ID = "\"languageToId\"";
+    public final static String NAME = "name";
 
     @Id
     @Column(name = ID)
     private UUID id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = LanguageEntity.ID)
-    private LanguageEntity languageEntityFrom_id;
+    @Column(name = LANGUAGEFROM_ID)
+    private UUID languageFromId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = LanguageEntity.ID)
-    private LanguageEntity languageEntityTo_id;
+    @Column(name = LANGUAGETO_ID)
+    private UUID languageToId;
+
+    @Column(name = NAME)
+    private String name;
 }

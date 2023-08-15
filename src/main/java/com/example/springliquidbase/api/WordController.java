@@ -12,12 +12,12 @@ import java.util.UUID;
 @RequestMapping("/word")
 public class WordController {
 
-    private final WordService wordService;
-
     @Autowired
     public WordController(WordService wordService) {
         this.wordService = wordService;
     }
+
+    private final WordService wordService;
 
     @GetMapping("/words")
     public Collection<WordModel> showWords(){
@@ -25,8 +25,8 @@ public class WordController {
     }
 
     @PostMapping("/add")
-    public String addWord(@RequestBody WordModel wordModel){
-        return wordService.createWord(wordModel);
+    public String addWord(@RequestParam String word, @RequestParam String language){
+        return wordService.createWord(word, language);
     }
 
     @PostMapping("/delete/{name}")
@@ -34,5 +34,4 @@ public class WordController {
         wordService.removeWord(name);
         return "word removed";
     }
-
 }

@@ -12,9 +12,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class TranslateModel{
 
-    @Id
     private UUID id;
-    private WordModel wordModelFrom;
-    private WordModel wordModelTo;
-    private DictionaryModel dictionary;
+    private UUID wordModelFrom;
+    private UUID wordModelTo;
+    private UUID dictionary;
 }

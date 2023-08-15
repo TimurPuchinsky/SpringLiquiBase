@@ -28,7 +28,6 @@ public class WordEntity {
     @Column(name = NAME)
     private String name;
 
-    @ManyToOne(cascade = CascadeType.REFRESH)
-    @JoinColumn(name = LANGUAGE_ID, referencedColumnName = LanguageEntity.ID)
-    private LanguageEntity languageId;
+    @Column(name = LANGUAGE_ID)
+    private UUID languageId;
 }

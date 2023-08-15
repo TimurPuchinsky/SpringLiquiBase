@@ -26,10 +26,10 @@ public class ServerConfig {
 
     public DataSourceConfig datasource(){
         DataSourceConfig dataSourceConfig = new DataSourceConfig();
-        dataSourceConfig.setUsername("postgres");
-        dataSourceConfig.setPassword("91324576TTT");
-        dataSourceConfig.setUrl("jdbc:postgresql://localhost:5432/translator");
-        dataSourceConfig.setSchema("public");
+        dataSourceConfig.setUsername(username);
+        dataSourceConfig.setPassword(password);
+        dataSourceConfig.setUrl(url);
+        dataSourceConfig.setSchema(dbSchema);
         return dataSourceConfig;
     }
 

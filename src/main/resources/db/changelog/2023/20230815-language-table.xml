@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20230815-language-table-1.xml" author="Puchinsky">
+        <addUniqueConstraint  columnNames="name"
+                              constraintName="const_name"
+                              deferrable="true"
+                              disabled="true"
+                              initiallyDeferred="true"
+                              schemaName="public"
+                              tableName="Language"
+                              validate="true"/>
+    </changeSet>
+</databaseChangeLog>

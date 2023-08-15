@@ -12,7 +12,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class LanguageModel {
 
-    @Id
     private UUID id;
     private String name;
 }

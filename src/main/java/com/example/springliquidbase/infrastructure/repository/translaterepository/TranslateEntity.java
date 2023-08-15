@@ -19,20 +19,20 @@ import java.util.UUID;
 public class TranslateEntity {
 
     public final static String ID = "id";
+    public final static String WORDFROMID = "\"wordFromId\"";
+    public final static String WORDTOID = "\"wordToId\"";
+    public final static String DICTIONARYID = "\"dictionaryId\"";
 
     @Id
     @Column(name = ID)
     private UUID id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = WordEntity.ID)
-    private WordEntity wordEntityFrom_id;
+    @Column(name = WORDFROMID)
+    private UUID wordFromId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = WordEntity.ID)
-    private WordEntity wordEntityTo_id;
+    @Column(name = WORDTOID)
+    private UUID wordToId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = DictionaryEntity.ID)
-    private DictionaryEntity dictionary_Entity_id;
+    @Column(name = DICTIONARYID)
+    private UUID dictionaryId;
 }

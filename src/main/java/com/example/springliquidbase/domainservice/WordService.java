@@ -24,19 +24,13 @@ public class WordService {
         wordRepository.removeWordByName(name);
     }
 
-    public String createWord(WordModel wordModel) {
+    public String createWord(String word, String language) {
         try {
-            wordRepository.createNewWord(wordModel.getName(), wordModel.getLanguage_Entity_id());
+            wordRepository.createNewWord(word, language);
         } catch (DataIntegrityException e) {
             log.error(e.getMessage(), e);
-            return "error";
+            return "wrong language was selected";
         }
         return "word added";
     }
-
-//    public String removeWord(String name) {
-//        wordRepository.removeWordByName(name);
-//        if (wordModel.getName() == null) return "word wasn't fount";
-//        return "word deleted";
-//    }
 }
