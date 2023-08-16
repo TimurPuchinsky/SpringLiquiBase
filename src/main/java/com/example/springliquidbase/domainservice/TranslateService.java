@@ -2,7 +2,6 @@ package com.example.springliquidbase.domainservice;
 
 import com.example.springliquidbase.MyCustomException;
 import com.example.springliquidbase.domain.PageResultModel;
-import com.example.springliquidbase.domain.dictionary.DictionaryPageModel;
 import com.example.springliquidbase.domain.translate.TranslateModel;
 import com.example.springliquidbase.domain.translate.TranslatePageModel;
 import com.example.springliquidbase.infrastructure.repository.translaterepository.TranslateRepository;
@@ -21,7 +20,6 @@ public class TranslateService {
 
     private final TranslateRepository translateRepository;
     private final DictionaryService dictionaryService;
-    private final LanguageService languageService;
     private final WordService wordService;
 
     @ExceptionHandler(MyCustomException.class)
@@ -29,11 +27,11 @@ public class TranslateService {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
-    public String getTranslate(String word, String languageTo) {
+    public String getTranslate(String word, String languageFrom, String languageTo) {
         try {
             UUID translate = translateRepository.getTranslateByWord(
                     wordService.getWordByName(word).getId(),
-                    languageService.getLanguageByName(languageTo).getId());
+                    dictionaryService.getDictionaryByLanguages(languageFrom, languageTo).getId());
             return wordService.getWordById(translate).getName();
         } catch (Exception e) {
             throw new MyCustomException("Слово или перевод не нашлись");
@@ -47,10 +45,10 @@ public class TranslateService {
     public UUID createTranslate(TranslateModel translateModel) {
         return translateRepository.createNewTranslate(translateModel.getWordModelFrom(),
                 translateModel.getWordModelTo(),
-                translateModel.getLanguageId());
+                translateModel.getDictionaryId());
     }
 
-    public PageResultModel getPage(TranslatePageModel model) {
-        return translateRepository.getPage(model);
+    public PageResultModel getPage(TranslatePageModel model, String languageFrom, String languageTo) {
+        return translateRepository.getPage(model, dictionaryService.getDictionaryByLanguages(languageFrom, languageTo).getId());
     }
 }

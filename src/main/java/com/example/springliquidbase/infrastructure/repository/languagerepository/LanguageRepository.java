@@ -1,15 +1,8 @@
 package com.example.springliquidbase.infrastructure.repository.languagerepository;
 
-import com.example.springliquidbase.ServerConfig;
-import com.example.springliquidbase.domain.LanguageModel;
+import com.example.springliquidbase.domain.language.LanguageModel;
 
 import com.example.springliquidbase.infrastructure.repository.DbModel;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;

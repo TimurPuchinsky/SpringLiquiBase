@@ -14,25 +14,18 @@ import java.util.UUID;
 @RequestMapping("/dictionary")
 public class DictionaryController {
 
-    @Autowired
     public DictionaryController(DictionaryService dictionaryService) {
         this.dictionaryService = dictionaryService;
     }
 
     private final DictionaryService dictionaryService;
 
-//    @GetMapping("/dictionaries")
-//    @ResponseBody
-//    public Collection<DictionaryModel> showDictionaries() {
-//        return dictionaryService.getAll();
-//    }
     @PostMapping("/getPage")
     public PageResultModel getPage(@RequestBody DictionaryPageModel model) {
         return dictionaryService.getPage(model);
     }
 
     @PostMapping("/add")
-    @ResponseBody
     public UUID addDictionary(@RequestBody DictionaryModel dictionaryModel) {
         return dictionaryService.createDictionary(dictionaryModel);
     }

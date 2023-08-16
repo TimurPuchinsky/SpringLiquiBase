@@ -1,4 +1,4 @@
-package com.example.springliquidbase.domain;
+package com.example.springliquidbase.domain.language;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,9 @@
 package com.example.springliquidbase.api;
 
+import com.example.springliquidbase.domain.PageResultModel;
+import com.example.springliquidbase.domain.dictionary.DictionaryPageModel;
 import com.example.springliquidbase.domain.translate.TranslateModel;
+import com.example.springliquidbase.domain.translate.TranslatePageModel;
 import com.example.springliquidbase.domainservice.TranslateService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +16,6 @@ import java.util.UUID;
 @RequestMapping("/translate")
 public class TranslateController {
 
-    @Autowired
     public TranslateController(TranslateService translateService) {
         this.translateService = translateService;
     }
@@ -22,8 +24,13 @@ public class TranslateController {
 
     @GetMapping("/translation")
     @Operation(summary = "перевод слова")
-    public String translation(@RequestParam String word, @RequestParam String languageTo) {
-        return translateService.getTranslate(word, languageTo);
+    public String translation(@RequestParam String word, @RequestParam String languageFrom, @RequestParam String languageTo) {
+        return translateService.getTranslate(word, languageFrom, languageTo);
+    }
+
+    @PostMapping("/getPage")
+    public PageResultModel getPage(@RequestBody TranslatePageModel model, @RequestParam String languageFrom, @RequestParam String languageTo) {
+        return translateService.getPage(model, languageFrom, languageTo);
     }
 
     @GetMapping("/dictionary/{dictionary}")

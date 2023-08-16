@@ -1,8 +1,7 @@
 package com.example.springliquidbase.domainservice;
 
 import com.example.springliquidbase.MyCustomException;
-import com.example.springliquidbase.domain.LanguageModel;
-import com.example.springliquidbase.domain.WordModel;
+import com.example.springliquidbase.domain.word.WordModel;
 import com.example.springliquidbase.infrastructure.repository.wordrepository.WordRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

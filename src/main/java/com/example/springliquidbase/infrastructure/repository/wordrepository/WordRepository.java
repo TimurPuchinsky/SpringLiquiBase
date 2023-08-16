@@ -1,10 +1,7 @@
 package com.example.springliquidbase.infrastructure.repository.wordrepository;
 
-import com.example.springliquidbase.ServerConfig;
-import com.example.springliquidbase.domain.LanguageModel;
-import com.example.springliquidbase.domain.WordModel;
+import com.example.springliquidbase.domain.word.WordModel;
 import com.example.springliquidbase.infrastructure.repository.DbModel;
-import com.example.springliquidbase.infrastructure.repository.languagerepository.LanguageEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

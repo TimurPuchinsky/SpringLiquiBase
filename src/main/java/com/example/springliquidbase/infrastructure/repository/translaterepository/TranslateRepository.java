@@ -1,12 +1,9 @@
 package com.example.springliquidbase.infrastructure.repository.translaterepository;
 
 import com.example.springliquidbase.domain.PageResultModel;
-import com.example.springliquidbase.domain.dictionary.DictionaryModel;
-import com.example.springliquidbase.domain.dictionary.DictionaryPageModel;
 import com.example.springliquidbase.domain.translate.TranslateModel;
 import com.example.springliquidbase.domain.translate.TranslatePageModel;
 import com.example.springliquidbase.infrastructure.repository.DbModel;
-import com.example.springliquidbase.infrastructure.repository.dictionaryrepository.DictionaryEntity;
 import io.ebean.PagedList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -31,7 +28,7 @@ public class TranslateRepository {
         model.setId(e.getId());
         model.setWordModelFrom(e.getWordFromId());
         model.setWordModelTo(e.getWordToId());
-        model.setLanguageId(e.getLanguageId());
+        model.setDictionaryId(e.getDictionaryId());
         return model;
     }
 
@@ -40,13 +37,13 @@ public class TranslateRepository {
         entity.setId(UUID.randomUUID());
         entity.setWordFromId(wordFromId);
         entity.setWordToId(wordToId);
-        entity.setLanguageId(languageId);
+        entity.setDictionaryId(languageId);
         return entity;
     }
 
-    public UUID getTranslateByWord(UUID word, UUID languageTo) {
+    public UUID getTranslateByWord(UUID word, UUID dictionary) {
         TranslateEntity translateEntity = db.getDb().find(TranslateEntity.class).where().eq(TranslateEntity.WORD_FROM_ID, word)
-                .and().eq(TranslateEntity.LANGUAGE_ID, languageTo).findOne();
+                .and().eq(TranslateEntity.DICTIONARY_ID, dictionary).findOne();
         return getModel(translateEntity).getWordModelTo();
     }
 
@@ -57,12 +54,13 @@ public class TranslateRepository {
     }
 
     public Collection<TranslateModel> getDictionaryById(UUID dictionaryId) {
-        List<TranslateEntity> translateEntity = db.getDb().find(TranslateEntity.class).where().eq(TranslateEntity.LANGUAGE_ID, dictionaryId).findList();
+        List<TranslateEntity> translateEntity = db.getDb().find(TranslateEntity.class).where().eq(TranslateEntity.DICTIONARY_ID, dictionaryId).findList();
         return translateEntity.stream().map(this::getModel).collect(Collectors.toList());
     }
 
-    public PageResultModel getPage(TranslatePageModel model) {
+    public PageResultModel getPage(TranslatePageModel model, UUID dictionary) {
         PagedList<TranslateEntity> pagedList = db.getDb().find(TranslateEntity.class)
+                .where().eq(TranslateEntity.DICTIONARY_ID, dictionary)
                 .setMaxRows(model.getPageSize())
                 .setFirstRow(model.getPageNum() * model.getPageSize() - 1).findPagedList();
         List<TranslateModel> models = pagedList.getList().stream().map(this::getModel).collect(Collectors.toList());

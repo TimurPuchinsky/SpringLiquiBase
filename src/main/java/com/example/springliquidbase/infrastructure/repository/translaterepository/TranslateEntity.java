@@ -1,7 +1,5 @@
 package com.example.springliquidbase.infrastructure.repository.translaterepository;
 
-import com.example.springliquidbase.infrastructure.repository.wordrepository.WordEntity;
-import com.example.springliquidbase.infrastructure.repository.dictionaryrepository.DictionaryEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +19,7 @@ public class TranslateEntity {
     public final static String ID = "id";
     public final static String WORD_FROM_ID = "\"wordFromId\"";
     public final static String WORD_TO_ID = "\"wordToId\"";
-    public final static String LANGUAGE_ID = "\"languageId\"";
+    public final static String DICTIONARY_ID = "\"dictionaryId\"";
 
     @Id
     @Column(name = ID)
@@ -33,6 +31,6 @@ public class TranslateEntity {
     @Column(name = WORD_TO_ID)
     private UUID wordToId;
 
-    @Column(name = LANGUAGE_ID)
-    private UUID languageId;
+    @Column(name = DICTIONARY_ID)
+    private UUID dictionaryId;
 }

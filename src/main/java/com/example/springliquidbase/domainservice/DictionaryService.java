@@ -25,10 +25,6 @@ public class DictionaryService {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
-    public Collection<DictionaryModel> getAll() {
-        return dictionaryRepository.findAll();
-    }
-
     public UUID createDictionary(DictionaryModel dictionaryModel) {
         return dictionaryRepository.createNewDictionary(dictionaryModel.getLanguageFrom(), dictionaryModel.getLanguageTo(), dictionaryModel.getName());
     }
@@ -37,6 +33,10 @@ public class DictionaryService {
         var dictionary = dictionaryRepository.find(name);
         if (dictionary == null) throw new NullPointerException();
         return dictionary;
+    }
+
+    public DictionaryModel getDictionaryByLanguages(String languageFrom, String languageTo) {
+        return dictionaryRepository.getDictionaryLanguages(languageFrom, languageTo);
     }
 
     public PageResultModel getPage(DictionaryPageModel model) {

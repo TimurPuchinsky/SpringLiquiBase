@@ -4,6 +4,7 @@ import com.example.springliquidbase.domain.PageResultModel;
 import com.example.springliquidbase.domain.dictionary.DictionaryModel;
 import com.example.springliquidbase.domain.dictionary.DictionaryPageModel;
 import com.example.springliquidbase.infrastructure.repository.DbModel;
+import com.example.springliquidbase.infrastructure.repository.translaterepository.TranslateEntity;
 import io.ebean.PagedList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -63,7 +64,13 @@ public class DictionaryRepository {
                 .setFirstRow(model.getPageNum() * model.getPageSize() - 1).findPagedList();
         List<DictionaryModel> models = pagedList.getList().stream().map(this::getModel).collect(Collectors.toList());
 
-
         return new PageResultModel(pagedList.getTotalCount(), models);
+    }
+
+    public DictionaryModel getDictionaryLanguages(String languageFrom, String languageTo) {
+        DictionaryEntity dictionary = db.getDb().find(DictionaryEntity.class)
+                .where().eq(DictionaryEntity.LANGUAGE_FROM_ID, languageFrom)
+                .and().eq(DictionaryEntity.LANGUAGE_TO_ID, languageTo).findOne();
+        return getModel(dictionary);
     }
 }
