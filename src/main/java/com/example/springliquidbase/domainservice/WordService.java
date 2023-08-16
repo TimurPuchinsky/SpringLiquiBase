@@ -1,36 +1,57 @@
 package com.example.springliquidbase.domainservice;
 
+import com.example.springliquidbase.MyCustomException;
+import com.example.springliquidbase.domain.LanguageModel;
 import com.example.springliquidbase.domain.WordModel;
 import com.example.springliquidbase.infrastructure.repository.wordrepository.WordRepository;
-import io.ebean.DataIntegrityException;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Collection;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-@Slf4j
 public class WordService {
 
     private final WordRepository wordRepository;
+    private final LanguageService languageService;
+
+    @ExceptionHandler(MyCustomException.class)
+    public ResponseEntity<String> handleException(MyCustomException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
 
     public Collection<WordModel> getAll() {
         return wordRepository.findAll();
     }
 
-    public void removeWord(String name) {
-        wordRepository.removeWordByName(name);
+    public int removeWord(String name) {
+        return wordRepository.removeWordByName(name);
     }
 
-    public String createWord(String word, String language) {
+    public UUID createWord(String word, String language) {
         try {
-            wordRepository.createNewWord(word, language);
-        } catch (DataIntegrityException e) {
-            log.error(e.getMessage(), e);
-            return "wrong language was selected";
+            return wordRepository.createNewWord(word, languageService.getLanguageByName(language).getId());
+        } catch (MyCustomException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new MyCustomException("Error creating word");
         }
-        return "word added";
+    }
+
+    public WordModel getWordByName(String name) {
+        var word = wordRepository.findWordByName(name);
+        if (word == null) throw new NullPointerException();
+        return word;
+    }
+
+    public WordModel getWordById(UUID name) {
+        var word = wordRepository.findWordById(name);
+        if (word == null) throw new NullPointerException();
+        return word;
     }
 }

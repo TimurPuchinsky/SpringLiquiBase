@@ -52,6 +52,6 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        applyMigrations(serverConfig.database().dataSource(), serverConfig.getDbSchema(), serverConfig.getChangelog());
+        applyMigrations(serverConfig.database().getDb().dataSource(), serverConfig.getDbSchema(), serverConfig.getChangelog());
     }
 }

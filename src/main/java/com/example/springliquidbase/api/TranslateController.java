@@ -1,10 +1,8 @@
 package com.example.springliquidbase.api;
 
-import com.example.springliquidbase.domain.TranslateModel;
-import com.example.springliquidbase.domain.WordModel;
+import com.example.springliquidbase.domain.translate.TranslateModel;
 import com.example.springliquidbase.domainservice.TranslateService;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,19 +20,19 @@ public class TranslateController {
 
     private final TranslateService translateService;
 
-    @GetMapping("/translaion")
+    @GetMapping("/translation")
     @Operation(summary = "перевод слова")
-    public TranslateModel showTranslate(@RequestParam String word, @RequestParam UUID dictionary) {
-        return translateService.getTranslate(word, dictionary);
+    public String translation(@RequestParam String word, @RequestParam String languageTo) {
+        return translateService.getTranslate(word, languageTo);
     }
 
     @GetMapping("/dictionary/{dictionary}")
-    public Collection<TranslateModel> showDictionary(@PathVariable(name = "dictionary") UUID dictionaryId){
-        return translateService.getDictionary(dictionaryId);
+    public Collection<TranslateModel> dictionary(@PathVariable(name = "dictionary") String dictionaryName) {
+        return translateService.getDictionary(dictionaryName);
     }
 
     @PostMapping("/add")
-    public String addTranslate(@RequestBody TranslateModel translateModel){
+    public UUID addTranslate(@RequestBody TranslateModel translateModel){
         return translateService.createTranslate(translateModel);
     }
 }

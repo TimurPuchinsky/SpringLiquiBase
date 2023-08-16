@@ -1,4 +1,4 @@
-package com.example.springliquidbase.domain;
+package com.example.springliquidbase.domain.translate;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,5 +15,5 @@ public class TranslateModel{
     private UUID id;
     private UUID wordModelFrom;
     private UUID wordModelTo;
-    private UUID dictionary;
+    private UUID languageId;
 }

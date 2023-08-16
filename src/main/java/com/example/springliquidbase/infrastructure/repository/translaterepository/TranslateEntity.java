@@ -19,20 +19,20 @@ import java.util.UUID;
 public class TranslateEntity {
 
     public final static String ID = "id";
-    public final static String WORDFROMID = "\"wordFromId\"";
-    public final static String WORDTOID = "\"wordToId\"";
-    public final static String DICTIONARYID = "\"dictionaryId\"";
+    public final static String WORD_FROM_ID = "\"wordFromId\"";
+    public final static String WORD_TO_ID = "\"wordToId\"";
+    public final static String LANGUAGE_ID = "\"languageId\"";
 
     @Id
     @Column(name = ID)
     private UUID id;
 
-    @Column(name = WORDFROMID)
+    @Column(name = WORD_FROM_ID)
     private UUID wordFromId;
 
-    @Column(name = WORDTOID)
+    @Column(name = WORD_TO_ID)
     private UUID wordToId;
 
-    @Column(name = DICTIONARYID)
-    private UUID dictionaryId;
+    @Column(name = LANGUAGE_ID)
+    private UUID languageId;
 }

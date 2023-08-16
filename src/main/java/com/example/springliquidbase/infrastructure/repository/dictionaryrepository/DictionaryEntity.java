@@ -1,6 +1,5 @@
 package com.example.springliquidbase.infrastructure.repository.dictionaryrepository;
 
-import com.example.springliquidbase.infrastructure.repository.languagerepository.LanguageEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,18 +17,18 @@ import java.util.UUID;
 public class DictionaryEntity {
 
     public final static String ID = "id";
-    public final static String LANGUAGEFROM_ID = "\"languageFromId\"";
-    public final static String LANGUAGETO_ID = "\"languageToId\"";
+    public final static String LANGUAGE_FROM_ID = "\"languageFromId\"";
+    public final static String LANGUAGE_TO_ID = "\"languageToId\"";
     public final static String NAME = "name";
 
     @Id
     @Column(name = ID)
     private UUID id;
 
-    @Column(name = LANGUAGEFROM_ID)
+    @Column(name = LANGUAGE_FROM_ID)
     private UUID languageFromId;
 
-    @Column(name = LANGUAGETO_ID)
+    @Column(name = LANGUAGE_TO_ID)
     private UUID languageToId;
 
     @Column(name = NAME)

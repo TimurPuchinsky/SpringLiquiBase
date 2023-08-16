@@ -3,6 +3,7 @@ package com.example.springliquidbase.infrastructure.repository.wordrepository;
 import com.example.springliquidbase.ServerConfig;
 import com.example.springliquidbase.domain.LanguageModel;
 import com.example.springliquidbase.domain.WordModel;
+import com.example.springliquidbase.infrastructure.repository.DbModel;
 import com.example.springliquidbase.infrastructure.repository.languagerepository.LanguageEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,10 +16,10 @@ import java.util.stream.Collectors;
 @Repository
 public class WordRepository {
 
-    ServerConfig db;
+    DbModel db;
 
     @Autowired
-    public WordRepository(ServerConfig db) {
+    public WordRepository(DbModel db) {
         this.db = db;
     }
 
@@ -30,24 +31,36 @@ public class WordRepository {
         return model;
     }
 
+    private WordEntity getEntity(String name, UUID languageId) {
+        var entity = new WordEntity();
+        entity.setId(UUID.randomUUID());
+        entity.setName(name);
+        entity.setLanguageId(languageId);
+        return entity;
+    }
+
     public Collection<WordModel> findAll() {
-        List<WordEntity> wordEntities = db.database().find(WordEntity.class).findList();
+        List<WordEntity> wordEntities = db.getDb().find(WordEntity.class).findList();
         return wordEntities.stream().map(this::getModel).collect(Collectors.toList());
     }
 
-    public void createNewWord(String word, String language) {
-        var entity = new WordEntity();
-        var languageEntity = db.database().find(LanguageEntity.class)
-                .where().eq(LanguageEntity.NAME, language).findOne();
-
-        entity.setId(UUID.randomUUID());
-        entity.setName(word);
-        entity.setLanguageId(languageEntity.getId());
-        db.database().insert(entity);
+    public UUID createNewWord(String word, UUID language) {
+        var entity = getEntity(word, language);
+        db.getDb().insert(entity);
+        return entity.getId();
     }
 
-    public void removeWordByName(String name) {
-        //var word = db.database().find(WordEntity.class).where().eq(WordEntity.NAME, name);
-        db.database().find(WordEntity.class).where().eq(WordEntity.NAME, name).delete();
+    public int removeWordByName(String name) {
+        return db.getDb().find(WordEntity.class).where().eq(WordEntity.NAME, name).delete();
+    }
+
+    public WordModel findWordByName(String name) {
+        WordEntity wordEntity = db.getDb().find(WordEntity.class).where().eq(WordEntity.NAME, name).findOne();
+        return getModel(wordEntity);
+    }
+
+    public WordModel findWordById(UUID id) {
+        WordEntity wordEntity = db.getDb().find(WordEntity.class).where().eq(WordEntity.ID, id).findOne();
+        return getModel(wordEntity);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.springliquidbase;
 
+import com.example.springliquidbase.infrastructure.repository.DbModel;
 import io.ebean.Database;
 import io.ebean.DatabaseFactory;
 import io.ebean.config.DatabaseConfig;
@@ -34,9 +35,10 @@ public class ServerConfig {
     }
 
     @Bean
-    public Database database(){
+    public DbModel database(){
         DatabaseConfig cfg = new DatabaseConfig();
+        cfg.setRegister(false);
         cfg.setDataSourceConfig(datasource());
-        return DatabaseFactory.create(cfg);
+        return new DbModel(DatabaseFactory.create(cfg));
     }
 }

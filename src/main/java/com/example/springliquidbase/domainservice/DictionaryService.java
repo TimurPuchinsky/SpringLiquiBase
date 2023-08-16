@@ -1,32 +1,45 @@
 package com.example.springliquidbase.domainservice;
 
-import com.example.springliquidbase.domain.DictionaryModel;
+import com.example.springliquidbase.MyCustomException;
+import com.example.springliquidbase.domain.PageResultModel;
+import com.example.springliquidbase.domain.dictionary.DictionaryModel;
+import com.example.springliquidbase.domain.dictionary.DictionaryPageModel;
 import com.example.springliquidbase.infrastructure.repository.dictionaryrepository.DictionaryRepository;
-import io.ebean.DataIntegrityException;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Collection;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-@Slf4j
 public class DictionaryService {
 
     private final DictionaryRepository dictionaryRepository;
+
+    @ExceptionHandler(MyCustomException.class)
+    public ResponseEntity<String> handleException(MyCustomException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
 
     public Collection<DictionaryModel> getAll() {
         return dictionaryRepository.findAll();
     }
 
-    public String createDictionary(DictionaryModel dictionaryModel) {
-        try {
-            dictionaryRepository.createNewDictionary(dictionaryModel.getLanguageFrom(), dictionaryModel.getLanguageTo(), dictionaryModel.getName());
-        } catch (DataIntegrityException e) {
-            log.error(e.getMessage(), e);
-            return "wrong language id";
-        }
-        return "dictionary added";
+    public UUID createDictionary(DictionaryModel dictionaryModel) {
+        return dictionaryRepository.createNewDictionary(dictionaryModel.getLanguageFrom(), dictionaryModel.getLanguageTo(), dictionaryModel.getName());
+    }
+
+    public DictionaryModel getDictionary(String name) {
+        var dictionary = dictionaryRepository.find(name);
+        if (dictionary == null) throw new NullPointerException();
+        return dictionary;
+    }
+
+    public PageResultModel getPage(DictionaryPageModel model) {
+        return dictionaryRepository.getPage(model);
     }
 }

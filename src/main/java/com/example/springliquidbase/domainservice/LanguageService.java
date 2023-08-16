@@ -1,36 +1,45 @@
 package com.example.springliquidbase.domainservice;
 
+import com.example.springliquidbase.MyCustomException;
 import com.example.springliquidbase.domain.LanguageModel;
 import com.example.springliquidbase.infrastructure.repository.languagerepository.LanguageRepository;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.sql.SQLException;
 import java.util.Collection;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-@Slf4j
 public class LanguageService {
 
     private final LanguageRepository languageRepository;
+
+    @ExceptionHandler(MyCustomException.class)
+    public ResponseEntity<String> handleException(MyCustomException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
 
     public Collection<LanguageModel> getAll() {
         return languageRepository.findAll();
     }
 
-    public String createLanguage(LanguageModel languageModel) {
-        try {
-            languageRepository.createNewLanguage(languageModel.getName());
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return "this language already exists";
-        }
-        return "language added";
+    public LanguageModel getLanguageByName(String name) {
+        var language = languageRepository.find(name);
+        if (language == null) throw new NullPointerException();
+        return language;
     }
 
-    public void removeLanguage(String name) {
-        languageRepository.removeLanguageByName(name);
+    public UUID createLanguage(LanguageModel languageModel) {
+        UUID languageId = languageRepository.createNewLanguage(languageModel.getName());
+        if (languageId == null) throw new NullPointerException();
+        return languageId;
+    }
+
+    public int removeLanguage(String name) {
+        return languageRepository.removeLanguageByName(name);
     }
 }

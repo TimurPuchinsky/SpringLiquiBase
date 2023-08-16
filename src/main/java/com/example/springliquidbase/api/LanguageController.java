@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/language")
@@ -19,18 +20,20 @@ public class LanguageController {
     private final LanguageService languageService;
 
     @GetMapping("/languages")
-    public Collection<LanguageModel> showLanguages(){
+    @ResponseBody
+    public Collection<LanguageModel> languages(){
         return languageService.getAll();
     }
 
     @PostMapping("/add")
-    public String addLanguages(@RequestBody LanguageModel languageModel){
+    @ResponseBody
+    public UUID addLanguages(@RequestBody LanguageModel languageModel){
         return languageService.createLanguage(languageModel);
     }
 
     @PostMapping("/delete/{name}")
-    public String deleteLanguages(@PathVariable String name){
-        languageService.removeLanguage(name);
-        return "language removed";
+    @ResponseBody
+    public int deleteLanguages(@PathVariable String name){
+        return languageService.removeLanguage(name);
     }
 }

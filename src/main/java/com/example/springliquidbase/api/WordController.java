@@ -20,18 +20,20 @@ public class WordController {
     private final WordService wordService;
 
     @GetMapping("/words")
+    @ResponseBody
     public Collection<WordModel> showWords(){
         return wordService.getAll();
     }
 
     @PostMapping("/add")
-    public String addWord(@RequestParam String word, @RequestParam String language){
+    @ResponseBody
+    public UUID addWord(@RequestParam String word, @RequestParam String language){
         return wordService.createWord(word, language);
     }
 
     @PostMapping("/delete/{name}")
-    public String deleteWord(@PathVariable String name){
-        wordService.removeWord(name);
-        return "word removed";
+    @ResponseBody
+    public int deleteWord(@PathVariable String name){
+        return wordService.removeWord(name);
     }
 }

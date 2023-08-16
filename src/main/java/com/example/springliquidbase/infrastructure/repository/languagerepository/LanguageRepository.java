@@ -3,7 +3,13 @@ package com.example.springliquidbase.infrastructure.repository.languagerepositor
 import com.example.springliquidbase.ServerConfig;
 import com.example.springliquidbase.domain.LanguageModel;
 
+import com.example.springliquidbase.infrastructure.repository.DbModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -14,18 +20,10 @@ import java.util.stream.Collectors;
 @Repository
 public class LanguageRepository {
 
-    ServerConfig db;
+    DbModel db;
 
-    @Autowired
-    public LanguageRepository(ServerConfig db) {
+    public LanguageRepository(DbModel db) {
         this.db = db;
-    }
-
-    public Collection<LanguageModel> findAll() {
-        List<LanguageEntity> languageEntities = db.database().find(LanguageEntity.class)
-                .findList();
-
-        return languageEntities.stream().map(this::getModel).collect(Collectors.toList());
     }
 
     private LanguageModel getModel(LanguageEntity e) {
@@ -35,14 +33,31 @@ public class LanguageRepository {
         return model;
     }
 
-    public void createNewLanguage(String languageModel) {
+    private LanguageEntity getEntity(String m) {
         var entity = new LanguageEntity();
-        entity.setName(languageModel);
         entity.setId(UUID.randomUUID());
-        db.database().insert(entity);
+        entity.setName(m);
+        return entity;
     }
 
-    public void removeLanguageByName(String name) {
-        db.database().find(LanguageEntity.class).where().eq(LanguageEntity.NAME, name).delete();
+    public Collection<LanguageModel> findAll() {
+        List<LanguageEntity> languageEntities = db.getDb().find(LanguageEntity.class)
+                .findList();
+        return languageEntities.stream().map(this::getModel).collect(Collectors.toList());
+    }
+
+    public LanguageModel find(String name) {
+        LanguageEntity languageEntity = db.getDb().find(LanguageEntity.class).where().eq(LanguageEntity.NAME, name).findOne();
+        return getModel(languageEntity);
+    }
+
+    public UUID createNewLanguage(String languageModel) {
+        var entity = getEntity(languageModel);
+        db.getDb().insert(entity);
+        return entity.getId();
+    }
+
+    public int removeLanguageByName(String name) {
+        return db.getDb().find(LanguageEntity.class).where().eq(LanguageEntity.NAME, name).delete();
     }
 }
