@@ -1,12 +1,13 @@
 package com.example.springliquidbase.api;
 
-import com.example.springliquidbase.domain.PageResultModel;
-import com.example.springliquidbase.domain.dictionary.DictionaryPageModel;
+import com.example.springliquidbase.domain.common.GuidResultModel;
+import com.example.springliquidbase.domain.common.PageResultModel;
+import com.example.springliquidbase.domain.common.StringResultModel;
 import com.example.springliquidbase.domain.translate.TranslateModel;
 import com.example.springliquidbase.domain.translate.TranslatePageModel;
+import com.example.springliquidbase.domain.translate.TranslateResultModel;
 import com.example.springliquidbase.domainservice.TranslateService;
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -24,13 +25,14 @@ public class TranslateController {
 
     @GetMapping("/translation")
     @Operation(summary = "перевод слова")
-    public String translation(@RequestParam String word, @RequestParam String languageFrom, @RequestParam String languageTo) {
+    public StringResultModel translation(@RequestParam String word, @RequestParam String languageFrom, @RequestParam String languageTo) {
         return translateService.getTranslate(word, languageFrom, languageTo);
     }
 
     @PostMapping("/getPage")
-    public PageResultModel getPage(@RequestBody TranslatePageModel model, @RequestParam String languageFrom, @RequestParam String languageTo) {
-        return translateService.getPage(model, languageFrom, languageTo);
+    @Operation(summary = "список переводов по словарю")
+    public PageResultModel<TranslateResultModel> getPage(@RequestBody TranslatePageModel model) {
+        return translateService.getPage(model);
     }
 
     @GetMapping("/dictionary/{dictionary}")
@@ -39,7 +41,7 @@ public class TranslateController {
     }
 
     @PostMapping("/add")
-    public UUID addTranslate(@RequestBody TranslateModel translateModel){
+    public GuidResultModel addTranslate(@RequestBody TranslateModel translateModel){
         return translateService.createTranslate(translateModel);
     }
 }

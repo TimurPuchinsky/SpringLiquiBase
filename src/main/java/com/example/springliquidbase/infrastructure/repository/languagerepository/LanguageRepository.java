@@ -39,8 +39,9 @@ public class LanguageRepository {
         return languageEntities.stream().map(this::getModel).collect(Collectors.toList());
     }
 
-    public LanguageModel find(String name) {
+    public LanguageModel getLanguageByName(String name) {
         LanguageEntity languageEntity = db.getDb().find(LanguageEntity.class).where().eq(LanguageEntity.NAME, name).findOne();
+        if (languageEntity == null) return null;
         return getModel(languageEntity);
     }
 

@@ -1,4 +1,4 @@
-package com.example.springliquidbase.domain;
+package com.example.springliquidbase.domain.common;
 
 import io.ebean.annotation.NotNull;
 

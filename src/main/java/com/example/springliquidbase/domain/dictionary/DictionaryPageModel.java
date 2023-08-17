@@ -1,6 +1,6 @@
 package com.example.springliquidbase.domain.dictionary;
 
-import com.example.springliquidbase.domain.PageModel;
+import com.example.springliquidbase.domain.common.PageModel;
 
 public class DictionaryPageModel extends PageModel {
 

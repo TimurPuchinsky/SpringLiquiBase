@@ -12,7 +12,7 @@ import java.util.UUID;
 public class TranslateModel{
 
     private UUID id;
-    private UUID wordModelFrom;
-    private UUID wordModelTo;
+    private UUID wordFromId;
+    private UUID wordToId;
     private UUID dictionaryId;
 }

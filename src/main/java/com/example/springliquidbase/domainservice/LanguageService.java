@@ -1,6 +1,5 @@
 package com.example.springliquidbase.domainservice;
 
-import com.example.springliquidbase.MyCustomException;
 import com.example.springliquidbase.domain.language.LanguageModel;
 import com.example.springliquidbase.infrastructure.repository.languagerepository.LanguageRepository;
 import lombok.AllArgsConstructor;
@@ -18,17 +17,12 @@ public class LanguageService {
 
     private final LanguageRepository languageRepository;
 
-    @ExceptionHandler(MyCustomException.class)
-    public ResponseEntity<String> handleException(MyCustomException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-    }
-
     public Collection<LanguageModel> getAll() {
         return languageRepository.findAll();
     }
 
     public LanguageModel getLanguageByName(String name) {
-        var language = languageRepository.find(name);
+        var language = languageRepository.getLanguageByName(name);
         if (language == null) throw new NullPointerException();
         return language;
     }

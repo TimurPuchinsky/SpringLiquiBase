@@ -2,6 +2,7 @@ package com.example.springliquidbase.infrastructure.repository.wordrepository;
 
 import com.example.springliquidbase.domain.word.WordModel;
 import com.example.springliquidbase.infrastructure.repository.DbModel;
+import io.ebean.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +16,6 @@ public class WordRepository {
 
     DbModel db;
 
-    @Autowired
     public WordRepository(DbModel db) {
         this.db = db;
     }
@@ -53,11 +53,21 @@ public class WordRepository {
 
     public WordModel findWordByName(String name) {
         WordEntity wordEntity = db.getDb().find(WordEntity.class).where().eq(WordEntity.NAME, name).findOne();
+        if (wordEntity == null) return null;
         return getModel(wordEntity);
     }
 
     public WordModel findWordById(UUID id) {
         WordEntity wordEntity = db.getDb().find(WordEntity.class).where().eq(WordEntity.ID, id).findOne();
         return getModel(wordEntity);
+    }
+
+    public Collection<WordModel> findWordsByIds(Collection<UUID> ids) {
+        Query<WordEntity> query = db.getDb().find(WordEntity.class).where().in(WordEntity.ID, ids).query();
+
+        return query.findList()
+                .stream()
+                .map(entity -> getModel(entity))
+                .collect(Collectors.toList());
     }
 }

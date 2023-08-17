@@ -1,13 +1,12 @@
 package com.example.springliquidbase.api;
 
-import com.example.springliquidbase.domain.PageResultModel;
+import com.example.springliquidbase.domain.common.PageResultModel;
 import com.example.springliquidbase.domain.dictionary.DictionaryModel;
 import com.example.springliquidbase.domain.dictionary.DictionaryPageModel;
 import com.example.springliquidbase.domainservice.DictionaryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.UUID;
 
 @RestController
@@ -21,6 +20,7 @@ public class DictionaryController {
     private final DictionaryService dictionaryService;
 
     @PostMapping("/getPage")
+    @Operation(summary = "список словарей")
     public PageResultModel getPage(@RequestBody DictionaryPageModel model) {
         return dictionaryService.getPage(model);
     }

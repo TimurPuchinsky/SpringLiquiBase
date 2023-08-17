@@ -1,11 +1,9 @@
 package com.example.springliquidbase.domainservice;
 
-import com.example.springliquidbase.MyCustomException;
 import com.example.springliquidbase.domain.word.WordModel;
 import com.example.springliquidbase.infrastructure.repository.wordrepository.WordRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -19,11 +17,6 @@ public class WordService {
     private final WordRepository wordRepository;
     private final LanguageService languageService;
 
-    @ExceptionHandler(MyCustomException.class)
-    public ResponseEntity<String> handleException(MyCustomException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-    }
-
     public Collection<WordModel> getAll() {
         return wordRepository.findAll();
     }
@@ -33,24 +26,23 @@ public class WordService {
     }
 
     public UUID createWord(String word, String language) {
-        try {
-            return wordRepository.createNewWord(word, languageService.getLanguageByName(language).getId());
-        } catch (MyCustomException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new MyCustomException("Error creating word");
-        }
+        return wordRepository.createNewWord(word, languageService.getLanguageByName(language).getId());
     }
 
     public WordModel getWordByName(String name) {
         var word = wordRepository.findWordByName(name);
+        return word;
+    }
+
+    public WordModel getWordById(UUID uuid) {
+        var word = wordRepository.findWordById(uuid);
         if (word == null) throw new NullPointerException();
         return word;
     }
 
-    public WordModel getWordById(UUID name) {
-        var word = wordRepository.findWordById(name);
-        if (word == null) throw new NullPointerException();
-        return word;
+    public Collection<WordModel> getWordByIds(Collection<UUID> ids) {
+        var words = wordRepository.findWordsByIds(ids);
+        if (words == null) throw new NullPointerException();
+        return words;
     }
 }
