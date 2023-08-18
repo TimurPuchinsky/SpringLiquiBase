@@ -10,9 +10,6 @@ import com.example.springliquidbase.domainservice.TranslateService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.UUID;
-
 @RestController
 @RequestMapping("/translate")
 public class TranslateController {
@@ -35,10 +32,10 @@ public class TranslateController {
         return translateService.getPage(model);
     }
 
-    @GetMapping("/dictionary/{dictionary}")
-    public Collection<TranslateModel> dictionary(@PathVariable(name = "dictionary") String dictionaryName) {
-        return translateService.getDictionary(dictionaryName);
-    }
+//    @GetMapping("/dictionary/{dictionary}")
+//    public Collection<TranslateModel> dictionary(@PathVariable(name = "dictionary") String dictionaryName) {
+//        return translateService.getDictionary(dictionaryName);
+//    }
 
     @PostMapping("/add")
     public GuidResultModel addTranslate(@RequestBody TranslateModel translateModel){

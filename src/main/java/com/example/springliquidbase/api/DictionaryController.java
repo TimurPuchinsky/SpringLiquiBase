@@ -1,5 +1,6 @@
 package com.example.springliquidbase.api;
 
+import com.example.springliquidbase.domain.common.GuidResultModel;
 import com.example.springliquidbase.domain.common.PageResultModel;
 import com.example.springliquidbase.domain.dictionary.DictionaryModel;
 import com.example.springliquidbase.domain.dictionary.DictionaryPageModel;
@@ -26,7 +27,7 @@ public class DictionaryController {
     }
 
     @PostMapping("/add")
-    public UUID addDictionary(@RequestBody DictionaryModel dictionaryModel) {
-        return dictionaryService.createDictionary(dictionaryModel);
+    public GuidResultModel addDictionary(@RequestParam String languageFrom, @RequestParam String languageTo, @RequestParam String name) {
+        return dictionaryService.createDictionary(languageFrom, languageTo, name);
     }
 }

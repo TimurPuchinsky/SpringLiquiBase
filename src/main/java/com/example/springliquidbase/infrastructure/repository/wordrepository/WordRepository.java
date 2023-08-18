@@ -1,9 +1,12 @@
 package com.example.springliquidbase.infrastructure.repository.wordrepository;
 
+import com.example.springliquidbase.domain.common.PageResultModel;
 import com.example.springliquidbase.domain.word.WordModel;
+import com.example.springliquidbase.domain.word.WordPageModel;
 import com.example.springliquidbase.infrastructure.repository.DbModel;
+import io.ebean.ExpressionList;
 import io.ebean.Query;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -21,6 +24,7 @@ public class WordRepository {
     }
 
     private WordModel getModel(WordEntity e) {
+        if (e == null) return null;
         var model = new WordModel();
         model.setId(e.getId());
         model.setName(e.getName());
@@ -36,9 +40,28 @@ public class WordRepository {
         return entity;
     }
 
-    public Collection<WordModel> findAll() {
-        List<WordEntity> wordEntities = db.getDb().find(WordEntity.class).findList();
-        return wordEntities.stream().map(this::getModel).collect(Collectors.toList());
+//    public Collection<WordModel> findAll() {
+//        List<WordEntity> wordEntities = db.getDb().find(WordEntity.class).findList();
+//        return wordEntities.stream().map(this::getModel).collect(Collectors.toList());
+//    }
+
+    public PageResultModel getPage(WordPageModel model) {
+        var exp = db.getDb().find(WordEntity.class)
+                .setMaxRows(model.getPageSize())
+                .setFirstRow(model.getPageNum() * model.getPageSize() - 1).where();
+
+        exp = applyFilters(exp, model);
+
+        var pagedList = exp.findPagedList();
+        List<WordModel> models = pagedList.getList().stream().map(this::getModel).collect(Collectors.toList());
+        return new PageResultModel(pagedList.getTotalCount(), models);
+    }
+
+    private ExpressionList<WordEntity> applyFilters(ExpressionList<WordEntity> exp, WordPageModel model) {
+        if (StringUtils.isNotBlank(model.getNameFilter())) {
+            exp = exp.ilike(WordEntity.NAME, "%" + model.getNameFilter() + "%");
+        }
+        return exp;
     }
 
     public UUID createNewWord(String word, UUID language) {
@@ -47,13 +70,13 @@ public class WordRepository {
         return entity.getId();
     }
 
-    public int removeWordByName(String name) {
-        return db.getDb().find(WordEntity.class).where().eq(WordEntity.NAME, name).delete();
+    public boolean removeWordByName(String name) {
+        var res = db.getDb().find(WordEntity.class).where().eq(WordEntity.NAME, name).delete();
+        return res == 1;
     }
 
     public WordModel findWordByName(String name) {
         WordEntity wordEntity = db.getDb().find(WordEntity.class).where().eq(WordEntity.NAME, name).findOne();
-        if (wordEntity == null) return null;
         return getModel(wordEntity);
     }
 
@@ -67,7 +90,7 @@ public class WordRepository {
 
         return query.findList()
                 .stream()
-                .map(entity -> getModel(entity))
+                .map(this::getModel)
                 .collect(Collectors.toList());
     }
 }

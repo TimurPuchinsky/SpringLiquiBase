@@ -37,7 +37,7 @@ public class ServerConfig {
     @Bean
     public DbModel database(){
         DatabaseConfig cfg = new DatabaseConfig();
-        cfg.setRegister(false);
+        cfg.setRegister(true);
         cfg.setDataSourceConfig(datasource());
         return new DbModel(DatabaseFactory.create(cfg));
     }

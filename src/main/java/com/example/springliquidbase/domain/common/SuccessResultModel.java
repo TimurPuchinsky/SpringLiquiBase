@@ -9,8 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SuccessResultModel extends GeneralResultModel {
 
-    public SuccessResultModel(String errorMessage, String errorCode) {
-        super(errorMessage, errorCode);
+    public SuccessResultModel(String errorCode, String errorMessage) {
+        super(errorCode, errorMessage);
         success = false;
     }
 

@@ -1,6 +1,11 @@
 package com.example.springliquidbase.domainservice;
 
+import com.example.springliquidbase.domain.common.GuidResultModel;
+import com.example.springliquidbase.domain.common.PageResultModel;
+import com.example.springliquidbase.domain.common.StringResultModel;
+import com.example.springliquidbase.domain.common.SuccessResultModel;
 import com.example.springliquidbase.domain.language.LanguageModel;
+import com.example.springliquidbase.domain.language.LanguagePageModel;
 import com.example.springliquidbase.infrastructure.repository.languagerepository.LanguageRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,9 +22,9 @@ public class LanguageService {
 
     private final LanguageRepository languageRepository;
 
-    public Collection<LanguageModel> getAll() {
-        return languageRepository.findAll();
-    }
+//    public Collection<LanguageModel> getAll() {
+//        return languageRepository.findAll();
+//    }
 
     public LanguageModel getLanguageByName(String name) {
         var language = languageRepository.getLanguageByName(name);
@@ -27,13 +32,25 @@ public class LanguageService {
         return language;
     }
 
-    public UUID createLanguage(LanguageModel languageModel) {
-        UUID languageId = languageRepository.createNewLanguage(languageModel.getName());
-        if (languageId == null) throw new NullPointerException();
-        return languageId;
+    public GuidResultModel createLanguage(LanguageModel languageModel) {
+        var searchLanguage = languageRepository.getLanguageByName(languageModel.getName());
+        if (searchLanguage != null) {
+            return new GuidResultModel("NullException", "язык уже существует");
+        }
+        var languageId = languageRepository.createNewLanguage(languageModel.getName());
+        return new GuidResultModel(languageId);
     }
 
-    public int removeLanguage(String name) {
-        return languageRepository.removeLanguageByName(name);
+    public SuccessResultModel removeLanguage(String name) {
+        var findLanguage = languageRepository.getLanguageByName(name);
+        if (findLanguage == null) {
+            return new SuccessResultModel("NullException", "такого языка нет");
+        }
+        var removeLanguage = languageRepository.removeLanguageByName(name);
+        return new SuccessResultModel(removeLanguage);
+    }
+
+    public PageResultModel getPage(LanguagePageModel model) {
+        return languageRepository.getPage(model);
     }
 }

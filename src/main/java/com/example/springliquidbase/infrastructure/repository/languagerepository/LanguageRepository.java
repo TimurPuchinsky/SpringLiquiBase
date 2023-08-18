@@ -1,8 +1,12 @@
 package com.example.springliquidbase.infrastructure.repository.languagerepository;
 
+import com.example.springliquidbase.domain.common.PageResultModel;
 import com.example.springliquidbase.domain.language.LanguageModel;
 
+import com.example.springliquidbase.domain.language.LanguagePageModel;
 import com.example.springliquidbase.infrastructure.repository.DbModel;
+import io.ebean.ExpressionList;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -20,6 +24,7 @@ public class LanguageRepository {
     }
 
     private LanguageModel getModel(LanguageEntity e) {
+        if (e == null) return null;
         var model = new LanguageModel();
         model.setName(e.getName());
         model.setId(e.getId());
@@ -34,14 +39,13 @@ public class LanguageRepository {
     }
 
     public Collection<LanguageModel> findAll() {
-        List<LanguageEntity> languageEntities = db.getDb().find(LanguageEntity.class)
+        var languageEntities = db.getDb().find(LanguageEntity.class)
                 .findList();
         return languageEntities.stream().map(this::getModel).collect(Collectors.toList());
     }
 
     public LanguageModel getLanguageByName(String name) {
-        LanguageEntity languageEntity = db.getDb().find(LanguageEntity.class).where().eq(LanguageEntity.NAME, name).findOne();
-        if (languageEntity == null) return null;
+        var languageEntity = db.getDb().find(LanguageEntity.class).where().eq(LanguageEntity.NAME, StringUtils.capitalize(name)).findOne();
         return getModel(languageEntity);
     }
 
@@ -51,7 +55,27 @@ public class LanguageRepository {
         return entity.getId();
     }
 
-    public int removeLanguageByName(String name) {
-        return db.getDb().find(LanguageEntity.class).where().eq(LanguageEntity.NAME, name).delete();
+    public boolean removeLanguageByName(String name) {
+         int res = db.getDb().find(LanguageEntity.class).where().eq(LanguageEntity.NAME, name).delete();
+         return res == 1;
+    }
+
+    public PageResultModel getPage(LanguagePageModel model) {
+        var exp = db.getDb().find(LanguageEntity.class)
+                .setMaxRows(model.getPageSize())
+                .setFirstRow(model.getPageNum() * model.getPageSize() - 1).where();
+
+        exp = applyFilters(exp, model);
+
+        var pagedList = exp.findPagedList();
+        List<LanguageModel> models = pagedList.getList().stream().map(this::getModel).collect(Collectors.toList());
+        return new PageResultModel<>(pagedList.getTotalCount(), models);
+    }
+
+    private ExpressionList<LanguageEntity> applyFilters(ExpressionList<LanguageEntity> exp, LanguagePageModel model) {
+        if (StringUtils.isNotBlank(model.getNameFilter())) {
+            exp = exp.ilike(LanguageEntity.NAME, "%" + model.getNameFilter() + "%");
+        }
+        return exp;
     }
 }

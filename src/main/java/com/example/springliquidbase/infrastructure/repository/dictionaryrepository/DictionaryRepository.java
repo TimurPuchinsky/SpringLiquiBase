@@ -3,8 +3,13 @@ package com.example.springliquidbase.infrastructure.repository.dictionaryreposit
 import com.example.springliquidbase.domain.common.PageResultModel;
 import com.example.springliquidbase.domain.dictionary.DictionaryModel;
 import com.example.springliquidbase.domain.dictionary.DictionaryPageModel;
+import com.example.springliquidbase.domain.word.WordModel;
+import com.example.springliquidbase.domain.word.WordPageModel;
 import com.example.springliquidbase.infrastructure.repository.DbModel;
+import com.example.springliquidbase.infrastructure.repository.wordrepository.WordEntity;
+import io.ebean.ExpressionList;
 import io.ebean.PagedList;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -24,6 +29,7 @@ public class DictionaryRepository {
     }
 
     private DictionaryModel getModel(DictionaryEntity e) {
+        if (e == null) return null;
         var model = new DictionaryModel();
         model.setId(e.getId());
         model.setName(e.getName());
@@ -57,19 +63,37 @@ public class DictionaryRepository {
         return entity.getId();
     }
 
+//    public PageResultModel getPage(DictionaryPageModel model) {
+//        PagedList<DictionaryEntity> pagedList = db.getDb().find(DictionaryEntity.class)
+//                .setMaxRows(model.getPageSize())
+//                .setFirstRow(model.getPageNum() * model.getPageSize() - 1).findPagedList();
+//        List<DictionaryModel> models = pagedList.getList().stream().map(this::getModel).collect(Collectors.toList());
+//        return new PageResultModel(pagedList.getTotalCount(), models);
+//    }
+
     public PageResultModel getPage(DictionaryPageModel model) {
-        PagedList<DictionaryEntity> pagedList = db.getDb().find(DictionaryEntity.class)
+        var exp = db.getDb().find(DictionaryEntity.class)
                 .setMaxRows(model.getPageSize())
-                .setFirstRow(model.getPageNum() * model.getPageSize() - 1).findPagedList();
+                .setFirstRow(model.getPageNum() * model.getPageSize() - 1).where();
+
+        exp = applyFilters(exp, model);
+
+        var pagedList = exp.findPagedList();
         List<DictionaryModel> models = pagedList.getList().stream().map(this::getModel).collect(Collectors.toList());
-        return new PageResultModel(pagedList.getTotalCount(), models);
+        return new PageResultModel<>(pagedList.getTotalCount(), models);
+    }
+
+    private ExpressionList<DictionaryEntity> applyFilters(ExpressionList<DictionaryEntity> exp, DictionaryPageModel model) {
+        if (StringUtils.isNotBlank(model.getNameFilter())) {
+            exp = exp.ilike(DictionaryEntity.NAME, "%" + model.getNameFilter() + "%");
+        }
+        return exp;
     }
 
     public DictionaryModel getDictionaryLanguages(UUID languageFrom, UUID languageTo) {
         DictionaryEntity dictionary = db.getDb().find(DictionaryEntity.class)
                 .where().eq(DictionaryEntity.LANGUAGE_FROM_ID, languageFrom)
                 .and().eq(DictionaryEntity.LANGUAGE_TO_ID, languageTo).findOne();
-        if (dictionary == null) return null;
         return getModel(dictionary);
     }
 }

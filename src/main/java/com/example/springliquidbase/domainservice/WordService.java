@@ -1,11 +1,16 @@
 package com.example.springliquidbase.domainservice;
 
+import com.example.springliquidbase.domain.common.GuidResultModel;
+import com.example.springliquidbase.domain.common.PageResultModel;
+import com.example.springliquidbase.domain.common.StringResultModel;
+import com.example.springliquidbase.domain.common.SuccessResultModel;
 import com.example.springliquidbase.domain.word.WordModel;
+import com.example.springliquidbase.domain.word.WordPageModel;
 import com.example.springliquidbase.infrastructure.repository.wordrepository.WordRepository;
 import lombok.AllArgsConstructor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -17,20 +22,29 @@ public class WordService {
     private final WordRepository wordRepository;
     private final LanguageService languageService;
 
-    public Collection<WordModel> getAll() {
-        return wordRepository.findAll();
+    public PageResultModel getPage(WordPageModel model) {
+        return wordRepository.getPage(model);
     }
 
-    public int removeWord(String name) {
-        return wordRepository.removeWordByName(name);
+    public SuccessResultModel removeWord(String name) {
+        var findWord = wordRepository.findWordByName(name);
+        if (findWord == null) {
+            return new SuccessResultModel("NullException", "слово не найдено");
+        }
+        var removeWord = wordRepository.removeWordByName(findWord.getName());
+        return new SuccessResultModel(removeWord);
     }
 
-    public UUID createWord(String word, String language) {
-        return wordRepository.createNewWord(word, languageService.getLanguageByName(language).getId());
+    public GuidResultModel createWord(String word, String language) {
+        var getLanguage = languageService.getLanguageByName(language);
+        if (getLanguage == null) {
+            return new GuidResultModel("NullException", "язык не нашелся");
+        }
+        return new GuidResultModel(wordRepository.createNewWord(StringUtils.capitalize(word), getLanguage.getId()));
     }
 
     public WordModel getWordByName(String name) {
-        var word = wordRepository.findWordByName(name);
+        var word = wordRepository.findWordByName(StringUtils.capitalize(name));
         return word;
     }
 

@@ -5,7 +5,8 @@ import lombok.Getter;
 
 public class TranslatePageModel extends PageModel {
 
-    private String nameFilter;
+    private String languageFrom;
+    private String languageTo;
 
     public String getLanguageFrom() {
         return languageFrom;
@@ -21,16 +22,5 @@ public class TranslatePageModel extends PageModel {
 
     public void setLanguageTo(String languageTo) {
         this.languageTo = languageTo;
-    }
-
-    private String languageFrom;
-    private String languageTo;
-
-    public String getNameFilter() {
-        return nameFilter;
-    }
-
-    public void setNameFilter(String nameFilter) {
-        this.nameFilter = nameFilter;
     }
 }
