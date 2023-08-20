@@ -12,14 +12,14 @@ import java.util.UUID;
 @Entity
 @Setter
 @Getter
-@Table(name = "'Word'")
+@Table(name = "Word")
 @AllArgsConstructor
 @NoArgsConstructor
 public class WordEntity {
 
     public final static String ID = "id";
     public final static String NAME = "name";
-    public final static String LANGUAGE_ID = "\"languageId\"";
+    public final static String LANGUAGE_ID = "languageId";
 
     @Id
     @Column(name = ID)

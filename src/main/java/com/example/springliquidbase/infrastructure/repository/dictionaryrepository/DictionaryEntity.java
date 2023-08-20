@@ -11,14 +11,14 @@ import java.util.UUID;
 @Entity
 @Setter
 @Getter
-@Table(name = "'Dictionary'")
+@Table(name = "Dictionary")
 @AllArgsConstructor
 @NoArgsConstructor
 public class DictionaryEntity {
 
     public final static String ID = "id";
-    public final static String LANGUAGE_FROM_ID = "\"languageFromId\"";
-    public final static String LANGUAGE_TO_ID = "\"languageToId\"";
+    public final static String LANGUAGE_FROM_ID = "languageFromId";
+    public final static String LANGUAGE_TO_ID = "languageToId";
     public final static String NAME = "name";
 
     @Id

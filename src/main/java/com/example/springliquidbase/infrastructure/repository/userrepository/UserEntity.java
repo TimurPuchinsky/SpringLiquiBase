@@ -1,26 +1,31 @@
 package com.example.springliquidbase.infrastructure.repository.userrepository;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-//@Entity
-//@Setter
-//@Getter
-//@Table(name = "'User'")
-//@AllArgsConstructor
-//@NoArgsConstructor
-public class UserEntity{
+@Entity
+@Setter
+@Getter
+@Table(name = "User")
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserEntity {
 
-    private final static String ID = "id";
-    private final static String LOGIN = "login";
-    private final static String PASSWORD = "password";
-    private final static String EMAIL = "email";
-    private final static String PHONE = "phone";
-    private final static String ROLE = "role";
-    private final static String CREATED = "created";
+    public final static String ID = "id";
+    public final static String LOGIN = "login";
+    public final static String PASSWORD = "password";
+    public final static String EMAIL = "email";
+    public final static String PHONE = "phone";
+    public final static String ROLE = "role";
+    public final static String CREATED = "created";
 
     @Id
     @Column(name = ID)
@@ -33,7 +38,6 @@ public class UserEntity{
     private String email;
     @Column(name = PHONE)
     private String phone;
-    @Enumerated(EnumType.STRING)
     @Column(name = ROLE)
     private String role;
     @Column(name = CREATED)
