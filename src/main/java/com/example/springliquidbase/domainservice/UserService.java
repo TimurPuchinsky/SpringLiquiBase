@@ -21,8 +21,8 @@ public class UserService {
         return  userRepository.getUserByLogin(login);
     }
 
-    public String authenticate(String login, String password) {
-        return userRepository.authenticate(login, password);
+    public String authenticateUser(String login, String password) {
+        return userRepository.authentication(login, password);
     }
 
     public String register(UserModel userModel) {

@@ -16,18 +16,18 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping(name = "/users")
+    @GetMapping("/users")
     private Collection<UserModel> users(){
         return userService.getAll();
     }
 
-    @PostMapping(name = "/register")
+    @PostMapping("/register")
     public String register(@RequestBody UserModel userModel) {
         return userService.register(userModel);
     }
 
-    @PostMapping(name = "/authenticate")
-    public String authenticate(@RequestParam String login, @RequestParam String password) {
-        return userService.authenticate(login, password);
+    @GetMapping("/authenticate")
+    public String authenticate(String login, String password) {
+        return userService.authenticateUser(login, password);
     }
 }

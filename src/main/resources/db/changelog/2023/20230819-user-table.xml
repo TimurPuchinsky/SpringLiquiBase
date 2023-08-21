@@ -6,7 +6,7 @@
 
     <changeSet id="20230819-user-table-1.xml" author="Puchinsky">
 
-        <createTable tableName="Dictionary">
+        <createTable tableName="User">
             <column name="id" type="uuid">
                 <constraints primaryKey="true"/>
             </column>
