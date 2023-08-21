@@ -31,7 +31,6 @@ public class UserEntity {
     public final static String CREATED = "created";
     public final static String CHANGED = "changed";
 
-
     @Id
     @Column(name = ID)
     private UUID id;

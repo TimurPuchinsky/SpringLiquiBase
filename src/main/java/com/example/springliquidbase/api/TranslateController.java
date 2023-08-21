@@ -8,8 +8,6 @@ import com.example.springliquidbase.domain.translate.TranslatePageModel;
 import com.example.springliquidbase.domain.translate.TranslateResultModel;
 import com.example.springliquidbase.domainservice.TranslateService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.annotation.security.PermitAll;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

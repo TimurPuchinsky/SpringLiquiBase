@@ -1,23 +1,13 @@
 package com.example.springliquidbase.infrastructure.repository.userrepository;
 
 import com.example.springliquidbase.domain.common.PageResultModel;
-import com.example.springliquidbase.domain.common.SuccessResultModel;
-import com.example.springliquidbase.domain.security.AuthenticationResponseModel;
+import com.example.springliquidbase.domain.user.UserAuthenticateModel;
 import com.example.springliquidbase.domain.user.UserCreateModel;
 import com.example.springliquidbase.domain.user.UserModel;
 import com.example.springliquidbase.domain.user.UserPageModel;
-//import com.example.springliquidbase.jwt.JwtService;
 import com.example.springliquidbase.infrastructure.repository.DbModel;
-import com.example.springliquidbase.jwt.JwtService;
 import io.ebean.ExpressionList;
-import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -33,8 +23,6 @@ public class UserRepository {
     }
 
     DbModel db;
-    AuthenticationManager authenticationManager;
-    JwtService jwtService;
 
     private UserModel getModel(UserEntity e) {
         if (e == null) return null;
@@ -88,42 +76,40 @@ public class UserRepository {
         return exp;
     }
 
-    public UserModel getUserByLogin(String login) {
-        var user = db.getDb().find(UserEntity.class).where().eq(UserEntity.LOGIN, login).findOne();
+    public UserModel getUserByEmail(String email) {
+        var user = db.getDb().find(UserEntity.class).where().eq(UserEntity.EMAIL, email).findOne();
         return getModel(user);
     }
 
-    public AuthenticationResponseModel authentication(String login, String password) {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(login, password));
-
-            var user = getUserByLogin(login);
-            var jwtToken = jwtService.generateToken(user);
-            return AuthenticationResponseModel.builder()
-                    .token(jwtToken)
-                    .build();
-            //return getUserByLogin(login).getLogin();
-        } catch (AuthenticationException e) {
-            throw new BadCredentialsException("Неверный логин или пароль");
-        }
+    public UserModel authentication(UserAuthenticateModel userModel) {
+        var userEntity = db.getDb().find(UserEntity.class).where().eq(UserEntity.LOGIN, userModel.getLogin())
+                .and().eq(UserEntity.PASSWORD, userModel.getPassword()).findOne();
+        return getModel(userEntity);
     }
 
-    public void addNewUser(UserCreateModel userModel) {
+    public UUID addNewUser(UserCreateModel userModel) {
         var user = getEntity(userModel);
         db.getDb().insert(user);
+        return user.getId();
     }
 
-    public boolean changeUserDetails(UserCreateModel userModel) {
-        var user = db.getDb().find(UserEntity.class).where()
-                .eq(UserEntity.EMAIL, userModel.getEmail()).or()
-                .eq(UserEntity.PHONE, userModel.getPhone());
-        return false;
+    public String changeUserPassword(UserModel userModel, String password) {
+         db.getDb().find(UserEntity.class).where()
+                .eq(UserEntity.EMAIL, userModel.getEmail())
+                .asUpdate()
+                .set(UserEntity.PASSWORD, password)
+                .set(UserEntity.CHANGED, LocalDateTime.now())
+                .update();
+        return password;
     }
 
-//    public boolean logout(HttpServletRequest request) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        request.getSession().invalidate();
-//        return
-//    }
+    public String changeUserLogin(UserModel userModel, String login) {
+        db.getDb().find(UserEntity.class).where()
+                .eq(UserEntity.EMAIL, userModel.getEmail())
+                .asUpdate()
+                .set(UserEntity.LOGIN, login)
+                .set(UserEntity.CHANGED, LocalDateTime.now())
+                .update();
+        return login;
+    }
 }
