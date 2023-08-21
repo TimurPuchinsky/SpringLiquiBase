@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20230821-user-table-1.xml" author="puchinsky">
+
+    </changeSet>
+    <changeSet id="2" author="liquibaseuser">
+        <rollback changeSetId="20230821-user-table-1.xml" changeSetAuthor="puchinsky" changeSetPath="db\changelog\2023\20230821-user-table.xml"/>
+    </changeSet>
+</databaseChangeLog>
