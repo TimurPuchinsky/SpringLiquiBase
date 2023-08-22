@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.sql.DataSource;
+import java.util.Map;
+
 @Configuration
 @Getter
 public class ServerConfig {
@@ -37,7 +40,7 @@ public class ServerConfig {
     @Bean
     public DbModel database(){
         DatabaseConfig cfg = new DatabaseConfig();
-        cfg.setRegister(true);
+        cfg.setRegister(false);
         cfg.setDataSourceConfig(datasource());
         return new DbModel(DatabaseFactory.create(cfg));
     }

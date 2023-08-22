@@ -5,8 +5,11 @@ import com.example.springliquidbase.domain.user.UserAuthenticateModel;
 import com.example.springliquidbase.domain.user.UserCreateModel;
 import com.example.springliquidbase.domain.user.UserPageModel;
 import com.example.springliquidbase.domainservice.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/user")
@@ -19,21 +22,24 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
+    @Operation(summary = "регистрация")
     private GuidResultModel register(UserCreateModel userModel) {
         return userService.addUser(userModel);
     }
 
     @PostMapping("/changeLogin")
-    private StringResultModel changeLogin(@RequestParam String email, @RequestParam String newLogin) {
-        return userService.updateLogin(email, newLogin);
+    @Operation(summary = "поменять логин")
+    private GuidResultModel changeLogin(@RequestParam UUID id, @RequestParam String newLogin) {
+        return userService.updateLogin(id, newLogin);
     }
 
     @PostMapping("/changePassword")
-    private StringResultModel changePassword(@RequestParam String email, @RequestParam String password) {
-        return userService.updatePassword(email, password);
+    @Operation(summary = "поменять пароль")
+    private GuidResultModel changePassword(@RequestParam UUID id, @RequestParam String password) {
+        return userService.updatePassword(id, password);
     }
 
-    @GetMapping("/getPage")
+    @PostMapping("/getPage")
     private PageResultModel getPage(UserPageModel userPageModel){
         return userService.getAll(userPageModel);
     }
@@ -46,12 +52,18 @@ public class UserController {
 //    }
 
     @GetMapping("/login")
-    public SuccessResultModel login(UserAuthenticateModel user) {
+    public LoginResultModel login(UserAuthenticateModel user) {
         return userService.authenticateUser(user);
     }
 
     @GetMapping("/logout")
     public String logout() {
         return "выход";
+    }
+
+    @PutMapping("/archive")
+    @Operation(summary = "архивирование/разархивирование")
+    public SuccessResultModel archive(@RequestParam UUID id) {
+        return userService.archiveUser(id);
     }
 }

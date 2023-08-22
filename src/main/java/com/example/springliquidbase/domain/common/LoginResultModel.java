@@ -3,7 +3,6 @@ package com.example.springliquidbase.domain.common;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.el.parser.Token;
 
 @Getter
 @Setter
@@ -13,8 +12,10 @@ public class LoginResultModel extends GeneralResultModel{
         super(errorCode, errorMessage);
     }
 
-    public LoginResultModel(String accessToken) {
+    public LoginResultModel(String errorCode, String errorMessage, String accessToken, String refreshToken) {
+        super(errorCode, errorMessage);
         this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
     private String accessToken;

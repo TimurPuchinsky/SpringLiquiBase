@@ -1,5 +1,7 @@
 package com.example.springliquidbase.infrastructure.repository.languagerepository;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

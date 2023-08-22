@@ -23,4 +23,5 @@ public class UserModel {
     private String role;
     private LocalDateTime created;
     private LocalDateTime changed;
+    private LocalDateTime archived;
 }

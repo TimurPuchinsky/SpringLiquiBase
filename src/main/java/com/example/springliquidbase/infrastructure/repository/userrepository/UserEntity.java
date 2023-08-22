@@ -30,6 +30,7 @@ public class UserEntity {
     public final static String ROLE = "role";
     public final static String CREATED = "created";
     public final static String CHANGED = "changed";
+    public final static String ARCHIVED = "archived";
 
     @Id
     @Column(name = ID)
@@ -54,4 +55,6 @@ public class UserEntity {
     private LocalDateTime created;
     @Column(name = CHANGED)
     private LocalDateTime changed;
+    @Column(name = ARCHIVED)
+    private LocalDateTime archived;
 }

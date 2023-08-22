@@ -1,11 +1,12 @@
 package com.example.springliquidbase.infrastructure.repository.userrepository;
 
 import com.example.springliquidbase.domain.common.PageResultModel;
-import com.example.springliquidbase.domain.user.UserAuthenticateModel;
 import com.example.springliquidbase.domain.user.UserCreateModel;
 import com.example.springliquidbase.domain.user.UserModel;
 import com.example.springliquidbase.domain.user.UserPageModel;
+import com.example.springliquidbase.domain.user.role.Role;
 import com.example.springliquidbase.infrastructure.repository.DbModel;
+import com.example.springliquidbase.PasswordEncoder;
 import io.ebean.ExpressionList;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
@@ -23,6 +24,7 @@ public class UserRepository {
     }
 
     DbModel db;
+    PasswordEncoder passwordEncoder = new PasswordEncoder();
 
     private UserModel getModel(UserEntity e) {
         if (e == null) return null;
@@ -38,6 +40,7 @@ public class UserRepository {
         model.setRole(e.getRole());
         model.setCreated(e.getCreated());
         model.setChanged(e.getChanged());
+        model.setArchived(e.getArchived());
         return model;
     }
 
@@ -45,15 +48,16 @@ public class UserRepository {
         var entity = new UserEntity();
         entity.setId(UUID.randomUUID());
         entity.setLogin(model.getLogin());
-        entity.setPassword(model.getPassword());
+        entity.setPassword(passwordEncoder.encode(model.getPassword()));
         entity.setEmail(model.getEmail());
         entity.setSurname(model.getSurname());
         entity.setName(model.getName());
         entity.setFather(model.getFather());
         entity.setPhone(model.getPhone());
-        entity.setRole("ROLE_USER");
+        entity.setRole(Role.ROLE_USER.name());
         entity.setCreated(LocalDateTime.now());
         entity.setChanged(LocalDateTime.now());
+        entity.setArchived(LocalDateTime.now());
         return entity;
     }
 
@@ -70,46 +74,93 @@ public class UserRepository {
     }
 
     private ExpressionList<UserEntity> applyFilters(ExpressionList<UserEntity> exp, UserPageModel model) {
-        if (StringUtils.isNotBlank(model.getNameFilter())) {
-            exp = exp.ilike(UserEntity.NAME, "%" + model.getNameFilter() + "%");
+        if (StringUtils.isNotBlank(model.getLogin())) {
+            exp = exp.ilike(UserEntity.LOGIN, "%" + model.getLogin() + "%");
+        }
+        if (StringUtils.isNotBlank(model.getPassword())) {
+            exp = exp.ilike(UserEntity.PASSWORD, "%" + model.getPassword() + "%");
+        }
+        if (StringUtils.isNotBlank(model.getEmail())) {
+            exp = exp.ilike(UserEntity.EMAIL, "%" + model.getEmail() + "%");
+        }
+        if (StringUtils.isNotBlank(model.getSurname())) {
+            exp = exp.ilike(UserEntity.SURNAME, "%" + model.getSurname() + "%");
+        }
+        if (StringUtils.isNotBlank(model.getName())) {
+            exp = exp.ilike(UserEntity.NAME, "%" + model.getName() + "%");
+        }
+        if (StringUtils.isNotBlank(model.getFather())) {
+            exp = exp.ilike(UserEntity.FATHER, "%" + model.getFather() + "%");
+        }
+        if (StringUtils.isNotBlank(model.getPhone())) {
+            exp = exp.ilike(UserEntity.PHONE, "%" + model.getPhone() + "%");
+        }
+        if (StringUtils.isNotBlank(model.getRole())) {
+            exp = exp.ilike(UserEntity.ROLE, "%" + model.getRole() + "%");
         }
         return exp;
     }
 
-    public UserModel getUserByEmail(String email) {
+    public UserModel findUserById(UUID id) {
+        var user = db.getDb().find(UserEntity.class).where().eq(UserEntity.ID, id).findOne();
+        return getModel(user);
+    }
+
+    public UserModel findUserByLogin(String login) {
+        var user = db.getDb().find(UserEntity.class).where().eq(UserEntity.LOGIN, login).findOne();
+        return getModel(user);
+    }
+
+    public UserModel findUserByEmail(String email) {
         var user = db.getDb().find(UserEntity.class).where().eq(UserEntity.EMAIL, email).findOne();
         return getModel(user);
     }
 
-    public UserModel authentication(UserAuthenticateModel userModel) {
-        var userEntity = db.getDb().find(UserEntity.class).where().eq(UserEntity.LOGIN, userModel.getLogin())
-                .and().eq(UserEntity.PASSWORD, userModel.getPassword()).findOne();
-        return getModel(userEntity);
+    public boolean authentication(String password, String encode) {
+        return passwordEncoder.matches(password, encode);
     }
 
-    public UUID addNewUser(UserCreateModel userModel) {
+    public UserModel addNewUser(UserCreateModel userModel) {
         var user = getEntity(userModel);
         db.getDb().insert(user);
-        return user.getId();
+        return getModel(user);
     }
 
-    public String changeUserPassword(UserModel userModel, String password) {
+    public UUID changeUserPassword(UserModel userModel, String password) {
          db.getDb().find(UserEntity.class).where()
                 .eq(UserEntity.EMAIL, userModel.getEmail())
                 .asUpdate()
-                .set(UserEntity.PASSWORD, password)
+                .set(UserEntity.PASSWORD, passwordEncoder.encode(password))
                 .set(UserEntity.CHANGED, LocalDateTime.now())
                 .update();
-        return password;
+        return userModel.getId();
     }
 
-    public String changeUserLogin(UserModel userModel, String login) {
+    public UUID changeUserLogin(UserModel userModel, String login) {
         db.getDb().find(UserEntity.class).where()
                 .eq(UserEntity.EMAIL, userModel.getEmail())
                 .asUpdate()
                 .set(UserEntity.LOGIN, login)
                 .set(UserEntity.CHANGED, LocalDateTime.now())
                 .update();
-        return login;
+        return userModel.getId();
+    }
+
+    public UUID userArchive(UserModel userModel) {
+         db.getDb().find(UserEntity.class).where()
+                .eq(UserEntity.ID, userModel.getId())
+                .asUpdate()
+                .set(UserEntity.ARCHIVED, LocalDateTime.now())
+                .update();
+         return userModel.getId();
+    }
+
+    public UUID userUnArchive(UserModel userModel) {
+        db.getDb().find(UserEntity.class).where()
+                .eq(UserEntity.ID, userModel.getId())
+                .asUpdate()
+                .set(UserEntity.ARCHIVED, null)
+                .update();
+        return userModel.getId();
     }
 }
