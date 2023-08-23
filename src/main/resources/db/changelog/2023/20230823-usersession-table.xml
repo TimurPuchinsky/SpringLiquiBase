@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20230823-usersession-table-1.xml" author="Puchinsky">
+        <createTable tableName="UserSession">
+            <column name="session_id" type="uuid">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="access_token" type="varchar(100)">
+                <constraints nullable="false"
+                             unique="true"/>
+            </column>
+            <column name="access_token_expired" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="refresh_token" type="varchar(100)">
+                <constraints nullable="false"
+                             unique="true"/>
+            </column>
+            <column name="refresh_token_expired" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint  baseColumnNames="user_id"
+                                  baseTableName="UserSession"
+                                  constraintName="fk_usersession_user_id_to_user"
+                                  deferrable="false"
+                                  initiallyDeferred="false"
+                                  onDelete="RESTRICT"
+                                  onUpdate="RESTRICT"
+                                  referencedColumnNames="id"
+                                  referencedTableName="User"
+                                  validate="true"/>
+    </changeSet>
+
+    <changeSet id="20230823-usersession-table-2.xml" author="Puchinsky">
+        <modifyDataType  columnName="access_token"
+                         newDataType="varchar(300)"
+                         schemaName="public"
+                         tableName="UserSession"/>
+        <modifyDataType  columnName="refresh_token"
+                         newDataType="varchar(300)"
+                         schemaName="public"
+                         tableName="UserSession"/>
+    </changeSet>
+</databaseChangeLog>

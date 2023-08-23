@@ -6,6 +6,7 @@ import com.example.springliquidbase.domain.user.UserCreateModel;
 import com.example.springliquidbase.domain.user.UserModel;
 import com.example.springliquidbase.domain.user.UserPageModel;
 import com.example.springliquidbase.infrastructure.repository.userrepository.UserRepository;
+import com.example.springliquidbase.infrastructure.repository.usersessionrepository.UserSessionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserSessionService userSessionService;
 
     public PageResultModel getAll(UserPageModel userPageModel) {
         return userRepository.getPage(userPageModel);
@@ -45,7 +47,8 @@ public class UserService {
         if (!password) {
             return new LoginResultModel("Error" ,"неправильный пароль");
         }
-        return new LoginResultModel(null, null, "4y85v7235024520", "iav94y5498");
+        var session = userSessionService.getSession(findUser);
+        return new LoginResultModel(null, null, session.getAccess_token(), session.getRefresh_token());
     }
 
     public GuidResultModel addUser(UserCreateModel userModel) {
