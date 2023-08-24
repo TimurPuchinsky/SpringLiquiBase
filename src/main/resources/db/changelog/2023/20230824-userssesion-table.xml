@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20230824-userssesion-table-1.xml" author="admin">
+        <modifyDataType  columnName="access_token"
+                         newDataType="varchar(350)"
+                         schemaName="public"
+                         tableName="UserSession"/>
+        <modifyDataType  columnName="refresh_token"
+                         newDataType="varchar(350)"
+                         schemaName="public"
+                         tableName="UserSession"/>
+    </changeSet>
+</databaseChangeLog>

@@ -6,18 +6,23 @@ import com.example.springliquidbase.domain.user.UserCreateModel;
 import com.example.springliquidbase.domain.user.UserModel;
 import com.example.springliquidbase.domain.user.UserPageModel;
 import com.example.springliquidbase.infrastructure.repository.userrepository.UserRepository;
-import com.example.springliquidbase.infrastructure.repository.usersessionrepository.UserSessionRepository;
-import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
 public class UserService {
+
+    public UserService(UserRepository userRepository, UserSessionService userSessionService) {
+        this.userRepository = userRepository;
+        this.userSessionService = userSessionService;
+    }
 
     private final UserRepository userRepository;
     private final UserSessionService userSessionService;
+    AuthenticationManager authenticationManager;
 
     public PageResultModel getAll(UserPageModel userPageModel) {
         return userRepository.getPage(userPageModel);
@@ -47,6 +52,12 @@ public class UserService {
         if (!password) {
             return new LoginResultModel("Error" ,"неправильный пароль");
         }
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        user.getLogin(),
+                        user.getPassword()
+                )
+        );
         var session = userSessionService.getSession(findUser);
         return new LoginResultModel(null, null, session.getAccess_token(), session.getRefresh_token());
     }
@@ -111,5 +122,10 @@ public class UserService {
             userRepository.userArchive(findUser);
             return new SuccessResultModel(true);
         }
+    }
+
+    public String logout(String access_token) {
+        userSessionService.removeSession(access_token);
+        return "выход";
     }
 }

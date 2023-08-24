@@ -1,9 +1,12 @@
 package com.example.springliquidbase;
 
+import org.springframework.stereotype.Component;
+
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.security.SecureRandom;
 
+@Component
 public class PasswordEncoder {
 
     public static final int ITERATIONS = 100;

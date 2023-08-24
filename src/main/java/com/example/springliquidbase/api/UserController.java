@@ -1,6 +1,9 @@
 package com.example.springliquidbase.api;
 
-import com.example.springliquidbase.domain.common.*;
+import com.example.springliquidbase.domain.common.GuidResultModel;
+import com.example.springliquidbase.domain.common.LoginResultModel;
+import com.example.springliquidbase.domain.common.PageResultModel;
+import com.example.springliquidbase.domain.common.SuccessResultModel;
 import com.example.springliquidbase.domain.user.UserAuthenticateModel;
 import com.example.springliquidbase.domain.user.UserCreateModel;
 import com.example.springliquidbase.domain.user.UserPageModel;
@@ -13,6 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/user")
+@PermitAll
 public class UserController {
 
     public UserController(UserService userService) {
@@ -21,6 +25,7 @@ public class UserController {
 
     private final UserService userService;
 
+    @PermitAll
     @PostMapping("/register")
     @Operation(summary = "регистрация")
     private GuidResultModel register(UserCreateModel userModel) {
@@ -39,26 +44,22 @@ public class UserController {
         return userService.updatePassword(id, password);
     }
 
+    @PermitAll
     @PostMapping("/getPage")
-    private PageResultModel getPage(UserPageModel userPageModel){
+    public PageResultModel getPage(UserPageModel userPageModel){
         return userService.getAll(userPageModel);
     }
 
     //@PreAuthorize("hasAnyAuthority('ADMIN')")
-//    @PermitAll
-//    @PostMapping("/register")
-//    public String register(@RequestBody UserModel userModel) {
-//        return userService.register(userModel);
-//    }
-
     @GetMapping("/login")
     public LoginResultModel login(UserAuthenticateModel user) {
         return userService.authenticateUser(user);
     }
 
-    @GetMapping("/logout")
-    public String logout() {
-        return "выход";
+    @PermitAll
+    @PostMapping("/logout")
+    public String logout(@RequestParam String access_token) {
+        return userService.logout(access_token);
     }
 
     @PutMapping("/archive")

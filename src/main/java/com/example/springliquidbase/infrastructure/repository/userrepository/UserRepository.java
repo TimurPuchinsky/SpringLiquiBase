@@ -19,12 +19,14 @@ import java.util.stream.Collectors;
 @Repository
 public class UserRepository {
 
-    public UserRepository(DbModel db) {
+
+    public UserRepository(DbModel db, PasswordEncoder passwordEncoder) {
         this.db = db;
+        this.passwordEncoder = passwordEncoder;
     }
 
     DbModel db;
-    PasswordEncoder passwordEncoder = new PasswordEncoder();
+    PasswordEncoder passwordEncoder;
 
     private UserModel getModel(UserEntity e) {
         if (e == null) return null;
@@ -54,7 +56,7 @@ public class UserRepository {
         entity.setName(model.getName());
         entity.setFather(model.getFather());
         entity.setPhone(model.getPhone());
-        entity.setRole(Role.ROLE_USER.name());
+        entity.setRole(Role.USER.name());
         entity.setCreated(LocalDateTime.now());
         entity.setChanged(LocalDateTime.now());
         entity.setArchived(LocalDateTime.now());

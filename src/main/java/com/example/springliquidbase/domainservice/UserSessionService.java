@@ -15,4 +15,8 @@ public class UserSessionService {
     public UserSessionModel getSession(UserModel userModel) {
         return userSessionRepository.createSession(userModel);
     }
+
+    public boolean removeSession(String access_token) {
+        return userSessionRepository.deleteSession(access_token);
+    }
 }

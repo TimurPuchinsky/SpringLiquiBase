@@ -1,7 +1,6 @@
 package com.example.springliquidbase;
 
 import com.example.springliquidbase.infrastructure.repository.DbModel;
-import io.ebean.Database;
 import io.ebean.DatabaseFactory;
 import io.ebean.config.DatabaseConfig;
 import io.ebean.datasource.DataSourceConfig;
@@ -9,9 +8,6 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.sql.DataSource;
-import java.util.Map;
 
 @Configuration
 @Getter
