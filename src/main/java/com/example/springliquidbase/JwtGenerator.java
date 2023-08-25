@@ -1,12 +1,15 @@
 package com.example.springliquidbase;
+
 import com.example.springliquidbase.domain.user.UserModel;
 import com.example.springliquidbase.domain.user.role.Role;
-import com.example.springliquidbase.domain.usersession.UserSessionModel;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -50,5 +53,16 @@ public class JwtGenerator {
                 .claim("sessionId", session_id)
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public String getLogin(String token) {
+        return getAllClaimsFromToken(token).getSubject();
+    }
+
+    private Claims getAllClaimsFromToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

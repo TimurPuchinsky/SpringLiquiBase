@@ -6,6 +6,7 @@ import com.example.springliquidbase.domain.dictionary.DictionaryModel;
 import com.example.springliquidbase.domain.dictionary.DictionaryPageModel;
 import com.example.springliquidbase.domainservice.DictionaryService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.annotation.security.PermitAll;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;

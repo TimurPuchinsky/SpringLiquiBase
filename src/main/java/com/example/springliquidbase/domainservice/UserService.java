@@ -6,23 +6,29 @@ import com.example.springliquidbase.domain.user.UserCreateModel;
 import com.example.springliquidbase.domain.user.UserModel;
 import com.example.springliquidbase.domain.user.UserPageModel;
 import com.example.springliquidbase.infrastructure.repository.userrepository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-
-    public UserService(UserRepository userRepository, UserSessionService userSessionService) {
-        this.userRepository = userRepository;
-        this.userSessionService = userSessionService;
-    }
 
     private final UserRepository userRepository;
     private final UserSessionService userSessionService;
-    AuthenticationManager authenticationManager;
+    //private final AuthenticationManager authenticationManager;
 
     public PageResultModel getAll(UserPageModel userPageModel) {
         return userRepository.getPage(userPageModel);
@@ -46,27 +52,25 @@ public class UserService {
     public LoginResultModel authenticateUser(UserAuthenticateModel user) {
         var findUser = userRepository.findUserByLogin(user.getLogin());
         if (findUser == null) {
-            return new LoginResultModel("Error" ,"неправильный логин");
+            return new LoginResultModel("Error", "неправильный логин");
         }
         var password = userRepository.authentication(user.getPassword(), findUser.getPassword());
         if (!password) {
-            return new LoginResultModel("Error" ,"неправильный пароль");
+            return new LoginResultModel("Error", "неправильный пароль");
         }
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        user.getLogin(),
-                        user.getPassword()
-                )
-        );
+//        var auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getLogin(), user.getPassword()));
+//        if (auth == null) {
+//            return new LoginResultModel("Error", "авторизация провалилась");
+//        }
         var session = userSessionService.getSession(findUser);
         return new LoginResultModel(null, null, session.getAccess_token(), session.getRefresh_token());
     }
 
     public GuidResultModel addUser(UserCreateModel userModel) {
         if (userModel.getLogin().isBlank() || userModel.getPassword().isBlank() ||
-        userModel.getEmail().isBlank() || userModel.getSurname().isBlank() ||
-        userModel.getName().isBlank() || userModel.getFather().isBlank() ||
-        userModel.getPhone().isBlank()) {
+                userModel.getEmail().isBlank() || userModel.getSurname().isBlank() ||
+                userModel.getName().isBlank() || userModel.getFather().isBlank() ||
+                userModel.getPhone().isBlank()) {
             return new GuidResultModel("Missing arguments", "не все поля заполнены");
         }
         var userLogin = getUserByLogin(userModel.getLogin());
