@@ -6,23 +6,31 @@ import com.example.springliquidbase.domain.user.UserCreateModel;
 import com.example.springliquidbase.domain.user.UserModel;
 import com.example.springliquidbase.domain.user.UserPageModel;
 import com.example.springliquidbase.infrastructure.repository.userrepository.UserRepository;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.UUID;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
-    public UserService(UserRepository userRepository, UserSessionService userSessionService) {
+    public UserService(@Lazy UserRepository userRepository, @Lazy UserSessionService userSessionService, @Lazy AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.userSessionService = userSessionService;
+        this.authenticationManager = authenticationManager;
     }
 
     private final UserRepository userRepository;
     private final UserSessionService userSessionService;
-    AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
     public PageResultModel getAll(UserPageModel userPageModel) {
         return userRepository.getPage(userPageModel);
@@ -52,12 +60,11 @@ public class UserService {
         if (!password) {
             return new LoginResultModel("Error" ,"неправильный пароль");
         }
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        user.getLogin(),
-                        user.getPassword()
-                )
-        );
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getLogin(), user.getPassword()));
+        } catch (BadCredentialsException e) {
+            return new LoginResultModel("401" ,"ошибка");
+        }
         var session = userSessionService.getSession(findUser);
         return new LoginResultModel(null, null, session.getAccess_token(), session.getRefresh_token());
     }
@@ -127,5 +134,18 @@ public class UserService {
     public String logout(String access_token) {
         userSessionService.removeSession(access_token);
         return "выход";
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserModel user = userRepository.findUserByLogin(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getLogin())
+                .password(user.getPassword())
+                .authorities(Collections.emptyList())
+                .build();
     }
 }

@@ -51,7 +51,8 @@ public class UserController {
     }
 
     //@PreAuthorize("hasAnyAuthority('ADMIN')")
-    @GetMapping("/login")
+    @PermitAll
+    @PostMapping("/login")
     public LoginResultModel login(UserAuthenticateModel user) {
         return userService.authenticateUser(user);
     }
