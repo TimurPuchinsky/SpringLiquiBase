@@ -51,9 +51,9 @@ public class UserSessionRepository {
         return getModel(userSessionEntity);
     }
 
-    public boolean deleteSession(String access_token) {
+    public boolean deleteSession(UUID userId) {
         var delete = db.getDb().find(UserSessionEntity.class)
-                .where().eq(UserSessionEntity.ACCESS_TOKEN, access_token).delete();
+                .where().eq(UserSessionEntity.USER_ID, userId).delete();
         return delete == 1;
     }
 }

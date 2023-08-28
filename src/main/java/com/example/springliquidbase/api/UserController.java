@@ -50,26 +50,26 @@ public class UserController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping("/getPage")
-    public PageResultModel getPage(@RequestBody UserPageModel userPageModel){
+    public PageResultModel getPage(@RequestBody UserPageModel userPageModel, Principal principal){
         return userService.getAll(userPageModel);
     }
 
     @PermitAll
     @PostMapping("/login")
-    public LoginResultModel login(@RequestBody UserAuthenticateModel user, Principal principal) {
+    public LoginResultModel login(@RequestBody UserAuthenticateModel user) {
         return userService.authenticateUser(user);
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/logout")
-    public String logout(@RequestParam String access_token) {
-        return userService.logout(access_token);
+    public SuccessResultModel logout(Principal principal) {
+        return userService.logout(principal.getName());
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/greeting")
-    public String greeting() {
-        return "hello";
+    public String greeting(Principal principal) {
+        return principal.getName();
     }
 
     @PreAuthorize("isAuthenticated()")

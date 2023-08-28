@@ -1,11 +1,8 @@
 package com.example.springliquidbase;
 
+import com.example.springliquidbase.domain.token.TokenModel;
 import com.example.springliquidbase.domain.user.UserModel;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -21,6 +18,19 @@ public class JwtGenerator {
 
     @Value("${spring.jwt.datasource.secretkey}")
     private String SECRET_KEY;
+
+    public TokenModel getModel(String token) {
+        if (token == null) return null;
+        var model = new TokenModel();
+        model.setIssuer(getAllClaimsFromToken(token).getIssuer());
+        model.setAudience(getAllClaimsFromToken(token).getAudience());
+        model.setSubject(getAllClaimsFromToken(token).getSubject());
+        model.setExpiration(getAllClaimsFromToken(token).getExpiration());
+        model.setRole(getRoles(token));
+        model.setUserId(getAllClaimsFromToken(token).get("userId", String.class));
+        model.setSessionId(getAllClaimsFromToken(token).get("sessionId", String.class));
+        return model;
+    }
 
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
@@ -69,7 +79,7 @@ public class JwtGenerator {
     }
 
     public List<String> getRoles(String token) {
-        Object roleClaim = getAllClaimsFromToken(token).get("role");
+        var roleClaim = getAllClaimsFromToken(token).get("role");
         if (roleClaim instanceof List) {
             return (List<String>) roleClaim;
         } else if (roleClaim instanceof String) {

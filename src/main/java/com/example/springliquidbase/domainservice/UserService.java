@@ -131,9 +131,8 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public String logout(String access_token) {
-        userSessionService.removeSession(access_token);
-        return "выход";
+    public SuccessResultModel logout(String login) {
+        return userSessionService.removeSession(login);
     }
 
     @Override

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -16,7 +17,7 @@ public class TokenModel {
     public String audience;
     public String subject;
     public Date expiration;
-    public String role;
-    public UUID userId;
-    public UUID sessionId;
+    public List<String> role;
+    public String userId;
+    public String sessionId;
 }
