@@ -10,8 +10,10 @@ import com.example.springliquidbase.domain.user.UserPageModel;
 import com.example.springliquidbase.domainservice.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.security.PermitAll;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.UUID;
 
 @RestController
@@ -32,37 +34,45 @@ public class UserController {
         return userService.addUser(userModel);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/changeLogin")
     @Operation(summary = "поменять логин")
     private GuidResultModel changeLogin(@RequestParam UUID id, @RequestParam String newLogin) {
         return userService.updateLogin(id, newLogin);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/changePassword")
     @Operation(summary = "поменять пароль")
     private GuidResultModel changePassword(@RequestParam UUID id, @RequestParam String password) {
         return userService.updatePassword(id, password);
     }
 
-    @PermitAll
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping("/getPage")
-    public PageResultModel getPage(UserPageModel userPageModel){
+    public PageResultModel getPage(@RequestBody UserPageModel userPageModel){
         return userService.getAll(userPageModel);
     }
 
-    //@PreAuthorize("hasAnyAuthority('ADMIN')")
     @PermitAll
     @PostMapping("/login")
-    public LoginResultModel login(UserAuthenticateModel user) {
+    public LoginResultModel login(@RequestBody UserAuthenticateModel user, Principal principal) {
         return userService.authenticateUser(user);
     }
 
-    @PermitAll
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/logout")
     public String logout(@RequestParam String access_token) {
         return userService.logout(access_token);
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/greeting")
+    public String greeting() {
+        return "hello";
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/archive")
     @Operation(summary = "архивирование/разархивирование")
     public SuccessResultModel archive(@RequestParam UUID id) {

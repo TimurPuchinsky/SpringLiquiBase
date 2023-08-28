@@ -1,7 +1,11 @@
 package com.example.springliquidbase;
+
 import com.example.springliquidbase.domain.user.UserModel;
-import com.example.springliquidbase.domain.user.role.Role;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -10,8 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class JwtGenerator {
@@ -25,13 +28,15 @@ public class JwtGenerator {
     }
 
     public String generateAccessToken(UserModel userModel, UUID session_id) {
+        Map<String, Object> role = new HashMap<>();
+        role.put("role", userModel.getRole());
         return Jwts
                 .builder()
                 .setIssuer("api")
                 .setAudience("app")
                 .setSubject(userModel.getLogin())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 2))
-                .claim("role", Role.USER.name())
+                .addClaims(role)
                 .claim("userId", userModel.getId())
                 .claim("sessionId", session_id)
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -61,5 +66,16 @@ public class JwtGenerator {
                 .setSigningKey(SECRET_KEY)
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public List<String> getRoles(String token) {
+        Object roleClaim = getAllClaimsFromToken(token).get("role");
+        if (roleClaim instanceof List) {
+            return (List<String>) roleClaim;
+        } else if (roleClaim instanceof String) {
+            return Arrays.asList((String) roleClaim);
+        } else {
+            return Collections.emptyList();
+        }
     }
 }
