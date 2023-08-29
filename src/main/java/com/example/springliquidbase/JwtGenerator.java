@@ -27,8 +27,8 @@ public class JwtGenerator {
         model.setSubject(getAllClaimsFromToken(token).getSubject());
         model.setExpiration(getAllClaimsFromToken(token).getExpiration());
         model.setRole(getRoles(token));
-        model.setUserId(getAllClaimsFromToken(token).get("userId", String.class));
-        model.setSessionId(getAllClaimsFromToken(token).get("sessionId", String.class));
+        model.setUserId(UUID.fromString(getAllClaimsFromToken(token).get("userId", String.class)));
+        model.setSessionId(UUID.fromString(getAllClaimsFromToken(token).get("sessionId", String.class)));
         return model;
     }
 
@@ -83,7 +83,7 @@ public class JwtGenerator {
         if (roleClaim instanceof List) {
             return (List<String>) roleClaim;
         } else if (roleClaim instanceof String) {
-            return Arrays.asList((String) roleClaim);
+            return List.of((String) roleClaim);
         } else {
             return Collections.emptyList();
         }

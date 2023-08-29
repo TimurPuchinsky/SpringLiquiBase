@@ -7,6 +7,8 @@ import com.example.springliquidbase.infrastructure.repository.usersessionreposit
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @AllArgsConstructor
 public class UserSessionService {
@@ -18,12 +20,8 @@ public class UserSessionService {
         return userSessionRepository.createSession(userModel);
     }
 
-    public SuccessResultModel removeSession(String login) {
-        var user = userService.getUserByLogin(login);
-        if (user == null) {
-            return new SuccessResultModel("NullException", "пользователь не нашелся");
-        }
-        var delete = userSessionRepository.deleteSession(user.getId());
+    public SuccessResultModel removeSession(UUID session) {
+        var delete = userSessionRepository.deleteSession(session);
         if (!delete) {
             return new SuccessResultModel("Error", "Сессия не удалилась");
         } else {

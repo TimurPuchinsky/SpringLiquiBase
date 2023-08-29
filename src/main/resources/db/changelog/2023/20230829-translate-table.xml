@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20230829-translate-table-1.xml" author="admin">
+        <dropColumn schemaName="public"
+                    tableName="Translate">
+            <column name="changed"/>
+        </dropColumn>
+        <addColumn schemaName= "public"
+                   tableName="Translate">
+            <column name="author_id"
+                    type="UUID"/>
+        </addColumn>
+        <addColumn schemaName= "public"
+                   tableName="Translate">
+            <column name="created"
+                    type="timestamp"/>
+        </addColumn>
+        <addColumn schemaName= "public"
+                   tableName="Translate">
+            <column name="changer_id"
+                    type="UUID"/>
+        </addColumn>
+        <addColumn schemaName= "public"
+                   tableName="Translate">
+            <column name="changed"
+                    type="timestamp"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

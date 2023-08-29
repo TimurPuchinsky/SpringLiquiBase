@@ -7,13 +7,13 @@ import com.example.springliquidbase.domain.common.SuccessResultModel;
 import com.example.springliquidbase.domain.user.UserAuthenticateModel;
 import com.example.springliquidbase.domain.user.UserCreateModel;
 import com.example.springliquidbase.domain.user.UserPageModel;
+import com.example.springliquidbase.domainservice.CommonUtils;
 import com.example.springliquidbase.domainservice.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.UUID;
 
 @RestController
@@ -50,7 +50,7 @@ public class UserController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping("/getPage")
-    public PageResultModel getPage(@RequestBody UserPageModel userPageModel, Principal principal){
+    public PageResultModel getPage(@RequestBody UserPageModel userPageModel){
         return userService.getAll(userPageModel);
     }
 
@@ -62,14 +62,14 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/logout")
-    public SuccessResultModel logout(Principal principal) {
-        return userService.logout(principal.getName());
+    public SuccessResultModel logout() {
+        return userService.logout(CommonUtils.getSessionId());
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PermitAll
     @GetMapping("/greeting")
-    public String greeting(Principal principal) {
-        return principal.getName();
+    public String greeting() {
+        return "hello, " + CommonUtils.getSubject();
     }
 
     @PreAuthorize("isAuthenticated()")

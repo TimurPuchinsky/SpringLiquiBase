@@ -96,4 +96,14 @@ public class DictionaryRepository {
                 .and().eq(DictionaryEntity.LANGUAGE_TO_ID, languageTo).findOne();
         return getModel(dictionary);
     }
+
+    public List<DictionaryModel> getAllDictionaries() {
+        var dictionaries = db.getDb().find(DictionaryEntity.class).findList();
+        return dictionaries.stream().map(this::getModel).collect(Collectors.toList());
+    }
+
+    public DictionaryModel getDictionaryById(UUID dictionaryId) {
+        var dict = db.getDb().find(DictionaryEntity.class).where().eq(DictionaryEntity.ID, dictionaryId).findOne();
+        return getModel(dict);
+    }
 }

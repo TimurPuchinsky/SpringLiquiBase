@@ -1,5 +1,6 @@
 package com.example.springliquidbase.domain.token;
 
+import com.example.springliquidbase.domain.user.role.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,6 @@ public class TokenModel {
     public String subject;
     public Date expiration;
     public List<String> role;
-    public String userId;
-    public String sessionId;
+    public UUID userId;
+    public UUID sessionId;
 }

@@ -5,6 +5,7 @@ import com.example.springliquidbase.domain.dictionary.DictionaryModel;
 import com.example.springliquidbase.domain.dictionary.DictionaryPageModel;
 import com.example.springliquidbase.domain.translate.TranslateModel;
 import com.example.springliquidbase.domain.translate.TranslatePageModel;
+import com.example.springliquidbase.domainservice.CommonUtils;
 import com.example.springliquidbase.infrastructure.repository.DbModel;
 import com.example.springliquidbase.infrastructure.repository.dictionaryrepository.DictionaryEntity;
 import io.ebean.ExpressionList;
@@ -12,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -34,6 +36,10 @@ public class TranslateRepository {
         model.setWordFromId(e.getWordFromId());
         model.setWordToId(e.getWordToId());
         model.setDictionaryId(e.getDictionaryId());
+        model.setAuthor_id(e.getAuthor_id());
+        model.setCreated(e.getCreated());
+        model.setChanger_id(e.getChanger_id());
+        model.setChanged(e.getChanged());
         return model;
     }
 
@@ -43,6 +49,10 @@ public class TranslateRepository {
         entity.setWordFromId(wordFromId);
         entity.setWordToId(wordToId);
         entity.setDictionaryId(dictionaryId);
+        entity.setAuthor_id(CommonUtils.getUserId());
+        entity.setCreated(LocalDateTime.now());
+        entity.setChanger_id(CommonUtils.getUserId());
+        entity.setChanged(LocalDateTime.now());
         return entity;
     }
 
@@ -87,8 +97,21 @@ public class TranslateRepository {
         return new PageResultModel<>(pagedList.getTotalCount(), models);
     }
 
-//    private ExpressionList<TranslateEntity> applyFilters(ExpressionList<TranslateEntity> exp) {
-//
-//        return exp;
-//    }
+    public TranslateModel getTranslateById(UUID translateId) {
+        var translate = db.getDb().find(TranslateEntity.class).where().eq(TranslateEntity.ID, translateId).findOne();
+        return getModel(translate);
+    }
+
+    public boolean changeTranslate(UUID translate_id ,UUID wordFrom, UUID wordTo, UUID dictionaryId) {
+        var change = db.getDb().find(TranslateEntity.class).where()
+                .eq(TranslateEntity.ID, translate_id)
+                .asUpdate()
+                .set(TranslateEntity.WORD_FROM_ID, wordFrom)
+                .set(TranslateEntity.WORD_TO_ID, wordTo)
+                .set(TranslateEntity.DICTIONARY_ID, dictionaryId)
+                .set(TranslateEntity.CHANGER_ID, CommonUtils.getUserId())
+                .set(TranslateEntity.CHANGED, LocalDateTime.now())
+                .update();
+        return change >= 1;
+    }
 }

@@ -3,6 +3,8 @@ package com.example.springliquidbase.domainservice;
 import com.example.springliquidbase.domain.common.GuidResultModel;
 import com.example.springliquidbase.domain.common.PageResultModel;
 import com.example.springliquidbase.domain.common.StringResultModel;
+import com.example.springliquidbase.domain.common.SuccessResultModel;
+import com.example.springliquidbase.domain.translate.TranslateAddModel;
 import com.example.springliquidbase.domain.translate.TranslateModel;
 import com.example.springliquidbase.domain.translate.TranslatePageModel;
 import com.example.springliquidbase.domain.translate.TranslateResultModel;
@@ -47,7 +49,7 @@ public class TranslateService {
         return translateRepository.getDictionaryById(dictionaryService.getDictionary(dictionaryName).getId());
     }
 
-    public GuidResultModel createTranslate(TranslateModel translateModel) {
+    public GuidResultModel createTranslate(TranslateAddModel translateModel) {
         var wordFrom = translateModel.getWordFromId();
         if (wordFrom == null) {
             return new GuidResultModel("NullException", "Слово не нашлось");
@@ -99,5 +101,29 @@ public class TranslateService {
                     }
                     return translateResult;
                 }).collect(Collectors.toList()));
+    }
+
+    public SuccessResultModel changeTranslation(UUID translateId, TranslateAddModel translateAddModel) {
+        var translateById = translateRepository.getTranslateById(translateId);
+        if (translateById == null) {
+            return new SuccessResultModel("NullException", "перевод не нашлелся");
+        }
+        var findwordfrom = wordService.getWordById(translateAddModel.getWordFromId());
+        if (findwordfrom == null) {
+            return new SuccessResultModel("NullException", "слово не нашлось");
+        }
+        var findwordto = wordService.getWordById(translateAddModel.getWordToId());
+        if (findwordto == null) {
+            return new SuccessResultModel("NullException", "перевод не нашлелся");
+        }
+        var finddict = dictionaryService.getDictionaryById(translateAddModel.getDictionaryId());
+        if (findwordto == null) {
+            return new SuccessResultModel("NullException", "перевод не нашлелся");
+        }
+        var changedtranslate = translateRepository.changeTranslate(translateId, findwordfrom.getId(), findwordto.getId(), finddict.getId());
+        if (!changedtranslate) {
+            return new SuccessResultModel("Error", "Изменения не сохранены");
+        }
+        return new SuccessResultModel(changedtranslate);
     }
 }

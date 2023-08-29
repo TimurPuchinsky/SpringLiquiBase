@@ -3,12 +3,17 @@ package com.example.springliquidbase.api;
 import com.example.springliquidbase.domain.common.GuidResultModel;
 import com.example.springliquidbase.domain.common.PageResultModel;
 import com.example.springliquidbase.domain.common.StringResultModel;
+import com.example.springliquidbase.domain.common.SuccessResultModel;
+import com.example.springliquidbase.domain.translate.TranslateAddModel;
 import com.example.springliquidbase.domain.translate.TranslateModel;
 import com.example.springliquidbase.domain.translate.TranslatePageModel;
 import com.example.springliquidbase.domain.translate.TranslateResultModel;
 import com.example.springliquidbase.domainservice.TranslateService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/translate")
@@ -37,8 +42,15 @@ public class TranslateController {
 //        return translateService.getDictionary(dictionaryName);
 //    }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/add")
-    public GuidResultModel addTranslate(@RequestBody TranslateModel translateModel){
+    public GuidResultModel addTranslate(@RequestBody TranslateAddModel translateModel){
         return translateService.createTranslate(translateModel);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping("/change")
+    public SuccessResultModel change(@RequestParam UUID translate_id, @RequestBody TranslateAddModel translateAddModel) {
+        return translateService.changeTranslation(translate_id, translateAddModel);
     }
 }

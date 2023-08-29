@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -50,5 +51,13 @@ public class DictionaryService {
 
     public PageResultModel getPage(DictionaryPageModel model) {
         return dictionaryRepository.getPage(model);
+    }
+
+    public List<DictionaryModel> getAllDictionaries() {
+        return dictionaryRepository.getAllDictionaries();
+    }
+
+    public DictionaryModel getDictionaryById(UUID dictionaryId) {
+        return dictionaryRepository.getDictionaryById(dictionaryId);
     }
 }
