@@ -2,6 +2,7 @@ package com.example.springliquidbase.infrastructure.repository.userrepository;
 
 import com.example.springliquidbase.domain.common.PageResultModel;
 import com.example.springliquidbase.domain.user.UserCreateModel;
+import com.example.springliquidbase.domain.user.UserFullnameModel;
 import com.example.springliquidbase.domain.user.UserModel;
 import com.example.springliquidbase.domain.user.UserPageModel;
 import com.example.springliquidbase.domain.user.role.Role;
@@ -164,5 +165,19 @@ public class UserRepository {
                 .set(UserEntity.ARCHIVED, null)
                 .update();
         return userModel.getId();
+    }
+
+    public UserFullnameModel findUserFioById(UUID id) {
+        var user = db.getDb().find(UserEntity.class).where().eq(UserEntity.ID, id).findOne();
+        return new UserFullnameModel(user.getSurname(), user.getName(), user.getFather());
+    }
+
+    public List<UserFullnameModel> findUsersFullnamesListById(List<UUID> authorIds) {
+        var list = db.getDb().find(UserEntity.class).where().in(UserEntity.ID, authorIds).findList();
+        return list.stream().map(e -> new UserFullnameModel(
+                e.getSurname(),
+                e.getName(),
+                e.getFather()))
+                .collect(Collectors.toList());
     }
 }

@@ -4,6 +4,7 @@ import com.example.springliquidbase.domain.common.GuidResultModel;
 import com.example.springliquidbase.domain.common.PageResultModel;
 import com.example.springliquidbase.domain.common.StringResultModel;
 import com.example.springliquidbase.domain.common.SuccessResultModel;
+import com.example.springliquidbase.domain.dictionary.DictionaryModel;
 import com.example.springliquidbase.domain.language.LanguageModel;
 import com.example.springliquidbase.domain.language.LanguagePageModel;
 import com.example.springliquidbase.infrastructure.repository.languagerepository.LanguageRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -52,5 +54,9 @@ public class LanguageService {
 
     public PageResultModel getPage(LanguagePageModel model) {
         return languageRepository.getPage(model);
+    }
+
+    public List<List<LanguageModel>> getLanguagesByDictionaryIds(List<DictionaryModel> dictionaries) {
+        return languageRepository.getLanguagesListByDictionaryIds(dictionaries);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.springliquidbase.infrastructure.repository.languagerepository;
 
 import com.example.springliquidbase.domain.common.PageResultModel;
+import com.example.springliquidbase.domain.dictionary.DictionaryModel;
 import com.example.springliquidbase.domain.language.LanguageModel;
 
 import com.example.springliquidbase.domain.language.LanguagePageModel;
@@ -77,5 +78,9 @@ public class LanguageRepository {
             exp = exp.ilike(LanguageEntity.NAME, "%" + model.getNameFilter() + "%");
         }
         return exp;
+    }
+
+    public List<List<LanguageModel>> getLanguagesListByDictionaryIds(List<DictionaryModel> dictionaries) {
+        return null;
     }
 }

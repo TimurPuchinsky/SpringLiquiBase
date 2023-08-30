@@ -1,13 +1,9 @@
 package com.example.springliquidbase.domainservice;
 
 import com.example.springliquidbase.domain.common.*;
-import com.example.springliquidbase.domain.user.UserAuthenticateModel;
-import com.example.springliquidbase.domain.user.UserCreateModel;
-import com.example.springliquidbase.domain.user.UserModel;
-import com.example.springliquidbase.domain.user.UserPageModel;
+import com.example.springliquidbase.domain.user.*;
 import com.example.springliquidbase.infrastructure.repository.userrepository.UserRepository;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -38,6 +35,11 @@ public class UserService implements UserDetailsService {
 
     public UserModel getUserById(UUID id) {
         var user = userRepository.findUserById(id);
+        return user;
+    }
+
+    public UserFullnameModel getUserFioById(UUID id) {
+        var user = userRepository.findUserFioById(id);
         return user;
     }
 
@@ -146,5 +148,9 @@ public class UserService implements UserDetailsService {
                 .password(user.getPassword())
                 .authorities(Collections.emptyList())
                 .build();
+    }
+
+    public List<UserFullnameModel> getUsersFullnamesListByIds(List<UUID> authorIds) {
+        return userRepository.findUsersFullnamesListById(authorIds);
     }
 }

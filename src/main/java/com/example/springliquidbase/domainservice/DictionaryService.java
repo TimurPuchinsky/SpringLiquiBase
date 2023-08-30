@@ -60,4 +60,8 @@ public class DictionaryService {
     public DictionaryModel getDictionaryById(UUID dictionaryId) {
         return dictionaryRepository.getDictionaryById(dictionaryId);
     }
+
+    public List<DictionaryModel> getDictionariesById(List<UUID> dictionariesIds) {
+        return dictionaryRepository.getDictionariesListById(dictionariesIds);
+    }
 }

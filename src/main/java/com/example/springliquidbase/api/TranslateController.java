@@ -5,7 +5,6 @@ import com.example.springliquidbase.domain.common.PageResultModel;
 import com.example.springliquidbase.domain.common.StringResultModel;
 import com.example.springliquidbase.domain.common.SuccessResultModel;
 import com.example.springliquidbase.domain.translate.TranslateAddModel;
-import com.example.springliquidbase.domain.translate.TranslateModel;
 import com.example.springliquidbase.domain.translate.TranslatePageModel;
 import com.example.springliquidbase.domain.translate.TranslateResultModel;
 import com.example.springliquidbase.domainservice.TranslateService;

@@ -70,13 +70,8 @@ public class TranslateService {
     }
 
     public PageResultModel<TranslateResultModel> getPage(TranslatePageModel model) {
-        var getDictionary = dictionaryService.getDictionaryByLanguages(model.getLanguageFrom(), model.getLanguageTo());
-        if (getDictionary == null) {
-            return new PageResultModel<>(0, new ArrayList<>());
-        }
 
-        var wordsPage = translateRepository.getPage(model,
-                getDictionary.getId());
+        var wordsPage = translateRepository.getPage(model);
 
         var wordIds = new ArrayList<UUID>();
         for (var translate : wordsPage.getList()) {
@@ -94,11 +89,17 @@ public class TranslateService {
                     if (wordFrom != null) {
                         translateResult.setWordStringFrom(wordFrom.getName());
                     }
-
                     var wordTo = wordMap.get(translateModel.getWordToId());
                     if (wordTo != null) {
                         translateResult.setWordStringTo(wordTo.getName());
                     }
+
+                    translateResult.setAuthor_id(translateModel.getAuthor_id());
+                    translateResult.setCreated(translateModel.getCreated());
+                    translateResult.setChanger_id(translateModel.getChanger_id());
+                    translateResult.setChanged(translateModel.getChanged());
+                    translateResult.setDictionary_id(translateModel.getDictionary_id());
+
                     return translateResult;
                 }).collect(Collectors.toList()));
     }

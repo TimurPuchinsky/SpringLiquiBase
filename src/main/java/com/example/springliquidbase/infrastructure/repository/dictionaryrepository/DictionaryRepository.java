@@ -106,4 +106,9 @@ public class DictionaryRepository {
         var dict = db.getDb().find(DictionaryEntity.class).where().eq(DictionaryEntity.ID, dictionaryId).findOne();
         return getModel(dict);
     }
+
+    public List<DictionaryModel> getDictionariesListById(List<UUID> dictionariesIds) {
+        var dict = db.getDb().find(DictionaryEntity.class).where().in(DictionaryEntity.ID, dictionariesIds).findList();
+        return dict.stream().map(this::getModel).collect(Collectors.toList());
+    }
 }

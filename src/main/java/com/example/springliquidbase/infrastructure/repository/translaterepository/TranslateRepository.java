@@ -1,13 +1,10 @@
 package com.example.springliquidbase.infrastructure.repository.translaterepository;
 
 import com.example.springliquidbase.domain.common.PageResultModel;
-import com.example.springliquidbase.domain.dictionary.DictionaryModel;
-import com.example.springliquidbase.domain.dictionary.DictionaryPageModel;
 import com.example.springliquidbase.domain.translate.TranslateModel;
 import com.example.springliquidbase.domain.translate.TranslatePageModel;
 import com.example.springliquidbase.domainservice.CommonUtils;
 import com.example.springliquidbase.infrastructure.repository.DbModel;
-import com.example.springliquidbase.infrastructure.repository.dictionaryrepository.DictionaryEntity;
 import io.ebean.ExpressionList;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +32,7 @@ public class TranslateRepository {
         model.setId(e.getId());
         model.setWordFromId(e.getWordFromId());
         model.setWordToId(e.getWordToId());
-        model.setDictionaryId(e.getDictionaryId());
+        model.setDictionary_id(e.getDictionaryId());
         model.setAuthor_id(e.getAuthor_id());
         model.setCreated(e.getCreated());
         model.setChanger_id(e.getChanger_id());
@@ -84,17 +81,23 @@ public class TranslateRepository {
 //                pagedList.getList().stream().map(this::getModel).collect(Collectors.toList()));
 //    }
 
-    public PageResultModel<TranslateModel> getPage(TranslatePageModel model, UUID dictionary) {
+    public PageResultModel<TranslateModel> getPage(TranslatePageModel model) {
         var exp = db.getDb().find(TranslateEntity.class)
-                .where().eq(TranslateEntity.DICTIONARY_ID, dictionary)
                 .setMaxRows(model.getPageSize())
                 .setFirstRow(model.getPageNum() * model.getPageSize() - 1).where();
 
-        //exp = applyFilters(exp);
+        exp = applyFilters(exp, model);
 
         var pagedList = exp.findPagedList();
         List<TranslateModel> models = pagedList.getList().stream().map(this::getModel).collect(Collectors.toList());
         return new PageResultModel<>(pagedList.getTotalCount(), models);
+    }
+
+    private ExpressionList<TranslateEntity> applyFilters(ExpressionList<TranslateEntity> exp, TranslatePageModel model) {
+        if (StringUtils.isNotBlank(model.getDictionary())) {
+            exp = exp.ilike(TranslateEntity.DICTIONARY_ID, "%" + model.getDictionary() + "%");
+        }
+        return exp;
     }
 
     public TranslateModel getTranslateById(UUID translateId) {

@@ -8,12 +8,15 @@ import com.example.springliquidbase.domain.user.UserAuthenticateModel;
 import com.example.springliquidbase.domain.user.UserCreateModel;
 import com.example.springliquidbase.domain.user.UserPageModel;
 import com.example.springliquidbase.domainservice.CommonUtils;
+import com.example.springliquidbase.domainservice.ExportService;
 import com.example.springliquidbase.domainservice.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.security.PermitAll;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -24,6 +27,10 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
+    @Autowired
+    ExportService exportService;
+
 
     private final UserService userService;
 
@@ -68,7 +75,8 @@ public class UserController {
 
     @PermitAll
     @GetMapping("/greeting")
-    public String greeting() {
+    public String greeting() throws IOException {
+        exportService.export();
         return "hello, " + CommonUtils.getSubject();
     }
 

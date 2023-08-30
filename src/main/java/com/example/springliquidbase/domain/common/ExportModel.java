@@ -1,5 +1,6 @@
 package com.example.springliquidbase.domain.common;
 
+import com.example.springliquidbase.domain.user.UserFullnameModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,9 +17,9 @@ public class ExportModel {
 
     private String word_from;
     private String word_to;
-    private String author_fio;
+    private UserFullnameModel author_fio;
     private LocalDateTime created;
-    private String changer_fio;
+    private UserFullnameModel changer_fio;
     private LocalDateTime changed;
     private UUID author_id;
     private UUID changer_id;

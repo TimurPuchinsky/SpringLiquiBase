@@ -15,7 +15,7 @@ public class TranslateModel{
     private UUID id;
     private UUID wordFromId;
     private UUID wordToId;
-    private UUID dictionaryId;
+    private UUID dictionary_id;
     private UUID author_id;
     private LocalDateTime created;
     private UUID changer_id;
