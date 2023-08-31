@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -53,15 +54,11 @@ public class DictionaryService {
         return dictionaryRepository.getPage(model);
     }
 
-    public List<DictionaryModel> getAllDictionaries() {
-        return dictionaryRepository.getAllDictionaries();
-    }
-
     public DictionaryModel getDictionaryById(UUID dictionaryId) {
         return dictionaryRepository.getDictionaryById(dictionaryId);
     }
 
-    public List<DictionaryModel> getDictionariesById(List<UUID> dictionariesIds) {
+    public Map<UUID, DictionaryModel> getDictionariesById(List<UUID> dictionariesIds) {
         return dictionaryRepository.getDictionariesListById(dictionariesIds);
     }
 }

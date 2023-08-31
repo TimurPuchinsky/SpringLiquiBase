@@ -24,34 +24,30 @@ import java.util.UUID;
 @PermitAll
 public class UserController {
 
+    private final UserService userService;
+
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @Autowired
-    ExportService exportService;
-
-
-    private final UserService userService;
-
     @PermitAll
     @PostMapping("/register")
     @Operation(summary = "регистрация")
-    private GuidResultModel register(UserCreateModel userModel) {
+    public GuidResultModel register(@RequestBody UserCreateModel userModel) {
         return userService.addUser(userModel);
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/changeLogin")
     @Operation(summary = "поменять логин")
-    private GuidResultModel changeLogin(@RequestParam UUID id, @RequestParam String newLogin) {
+    public GuidResultModel changeLogin(@RequestParam UUID id, @RequestParam String newLogin) {
         return userService.updateLogin(id, newLogin);
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/changePassword")
     @Operation(summary = "поменять пароль")
-    private GuidResultModel changePassword(@RequestParam UUID id, @RequestParam String password) {
+    public GuidResultModel changePassword(@RequestParam UUID id, @RequestParam String password) {
         return userService.updatePassword(id, password);
     }
 
@@ -75,15 +71,14 @@ public class UserController {
 
     @PermitAll
     @GetMapping("/greeting")
-    public String greeting() throws IOException {
-        exportService.export();
+    public String greeting() {
         return "hello, " + CommonUtils.getSubject();
     }
 
     @PreAuthorize("isAuthenticated()")
     @PutMapping("/archive")
     @Operation(summary = "архивирование/разархивирование")
-    public SuccessResultModel archive(@RequestParam UUID id) {
-        return userService.archiveUser(id);
+    public SuccessResultModel archive() {
+        return userService.archiveUser(CommonUtils.getUserId());
     }
 }

@@ -3,9 +3,11 @@ package com.example.springliquidbase.infrastructure.repository.dictionaryreposit
 import com.example.springliquidbase.domain.common.PageResultModel;
 import com.example.springliquidbase.domain.dictionary.DictionaryModel;
 import com.example.springliquidbase.domain.dictionary.DictionaryPageModel;
+import com.example.springliquidbase.domain.user.UserModel;
 import com.example.springliquidbase.domain.word.WordModel;
 import com.example.springliquidbase.domain.word.WordPageModel;
 import com.example.springliquidbase.infrastructure.repository.DbModel;
+import com.example.springliquidbase.infrastructure.repository.userrepository.UserEntity;
 import com.example.springliquidbase.infrastructure.repository.wordrepository.WordEntity;
 import io.ebean.ExpressionList;
 import io.ebean.PagedList;
@@ -13,9 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -107,8 +107,13 @@ public class DictionaryRepository {
         return getModel(dict);
     }
 
-    public List<DictionaryModel> getDictionariesListById(List<UUID> dictionariesIds) {
-        var dict = db.getDb().find(DictionaryEntity.class).where().in(DictionaryEntity.ID, dictionariesIds).findList();
-        return dict.stream().map(this::getModel).collect(Collectors.toList());
+    public Map<UUID, DictionaryModel> getDictionariesListById(List<UUID> dictionariesIds) {
+        Map<UUID, DictionaryModel> dictionaryModelMap = new HashMap<>();
+        for (DictionaryEntity dictionary :
+                db.getDb().find(DictionaryEntity.class).where().in(DictionaryEntity.ID, dictionariesIds).findList()) {
+            DictionaryModel model = getModel(dictionary);
+            dictionaryModelMap.put(model.getId(), model);
+        }
+        return dictionaryModelMap;
     }
 }

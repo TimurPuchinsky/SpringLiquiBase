@@ -14,7 +14,6 @@ import java.util.UUID;
 public class UserSessionService {
 
     private final UserSessionRepository userSessionRepository;
-    private final UserService userService;
 
     public UserSessionModel getSession(UserModel userModel) {
         return userSessionRepository.createSession(userModel);

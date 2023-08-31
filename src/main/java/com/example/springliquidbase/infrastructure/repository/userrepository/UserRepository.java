@@ -2,7 +2,6 @@ package com.example.springliquidbase.infrastructure.repository.userrepository;
 
 import com.example.springliquidbase.domain.common.PageResultModel;
 import com.example.springliquidbase.domain.user.UserCreateModel;
-import com.example.springliquidbase.domain.user.UserFullnameModel;
 import com.example.springliquidbase.domain.user.UserModel;
 import com.example.springliquidbase.domain.user.UserPageModel;
 import com.example.springliquidbase.domain.user.role.Role;
@@ -13,7 +12,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -167,17 +168,12 @@ public class UserRepository {
         return userModel.getId();
     }
 
-    public UserFullnameModel findUserFioById(UUID id) {
-        var user = db.getDb().find(UserEntity.class).where().eq(UserEntity.ID, id).findOne();
-        return new UserFullnameModel(user.getSurname(), user.getName(), user.getFather());
-    }
-
-    public List<UserFullnameModel> findUsersFullnamesListById(List<UUID> authorIds) {
-        var list = db.getDb().find(UserEntity.class).where().in(UserEntity.ID, authorIds).findList();
-        return list.stream().map(e -> new UserFullnameModel(
-                e.getSurname(),
-                e.getName(),
-                e.getFather()))
-                .collect(Collectors.toList());
+    public Map<UUID, UserModel> findUsersListById(List<UUID> authorIds) {
+        Map<UUID, UserModel> usersById = new HashMap<>();
+        for (UserEntity userEntity : db.getDb().find(UserEntity.class).where().in(UserEntity.ID, authorIds).findList()) {
+            UserModel userModel = getModel(userEntity);
+            usersById.put(userModel.getId(), userModel);
+        }
+        return usersById;
     }
 }

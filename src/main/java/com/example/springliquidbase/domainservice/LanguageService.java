@@ -2,20 +2,15 @@ package com.example.springliquidbase.domainservice;
 
 import com.example.springliquidbase.domain.common.GuidResultModel;
 import com.example.springliquidbase.domain.common.PageResultModel;
-import com.example.springliquidbase.domain.common.StringResultModel;
 import com.example.springliquidbase.domain.common.SuccessResultModel;
-import com.example.springliquidbase.domain.dictionary.DictionaryModel;
 import com.example.springliquidbase.domain.language.LanguageModel;
 import com.example.springliquidbase.domain.language.LanguagePageModel;
 import com.example.springliquidbase.infrastructure.repository.languagerepository.LanguageRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -23,10 +18,7 @@ import java.util.UUID;
 public class LanguageService {
 
     private final LanguageRepository languageRepository;
-
-//    public Collection<LanguageModel> getAll() {
-//        return languageRepository.findAll();
-//    }
+    private final DictionaryService dictionaryService;
 
     public LanguageModel getLanguageByName(String name) {
         var language = languageRepository.getLanguageByName(name);
@@ -56,7 +48,9 @@ public class LanguageService {
         return languageRepository.getPage(model);
     }
 
-    public List<List<LanguageModel>> getLanguagesByDictionaryIds(List<DictionaryModel> dictionaries) {
-        return languageRepository.getLanguagesListByDictionaryIds(dictionaries);
+    public Map<UUID, List<LanguageModel>> getLanguagesByDictionaryIds(List<UUID> dictionaries) {
+        var dictionariesList = dictionaryService.getDictionariesById(dictionaries);
+        var languageIds = languageRepository.getLanguagesIdsListByDict(dictionariesList);
+        return languageRepository.getLanguagesListByDictionaryIds(languageIds);
     }
 }

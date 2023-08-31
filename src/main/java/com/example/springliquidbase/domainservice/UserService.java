@@ -14,12 +14,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 public class UserService implements UserDetailsService {
 
-    public UserService(@Lazy UserRepository userRepository, @Lazy UserSessionService userSessionService, @Lazy AuthenticationManager authenticationManager) {
+    public UserService(UserRepository userRepository, UserSessionService userSessionService, @Lazy AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.userSessionService = userSessionService;
         this.authenticationManager = authenticationManager;
@@ -35,11 +36,6 @@ public class UserService implements UserDetailsService {
 
     public UserModel getUserById(UUID id) {
         var user = userRepository.findUserById(id);
-        return user;
-    }
-
-    public UserFullnameModel getUserFioById(UUID id) {
-        var user = userRepository.findUserFioById(id);
         return user;
     }
 
@@ -150,7 +146,7 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-    public List<UserFullnameModel> getUsersFullnamesListByIds(List<UUID> authorIds) {
-        return userRepository.findUsersFullnamesListById(authorIds);
+    public Map<UUID, UserModel> getUsersListByIds(List<UUID> authorIds) {
+        return userRepository.findUsersListById(authorIds);
     }
 }

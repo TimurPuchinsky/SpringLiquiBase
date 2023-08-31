@@ -5,14 +5,14 @@ import com.example.springliquidbase.domain.dictionary.DictionaryModel;
 import com.example.springliquidbase.domain.language.LanguageModel;
 
 import com.example.springliquidbase.domain.language.LanguagePageModel;
+import com.example.springliquidbase.domain.user.UserModel;
 import com.example.springliquidbase.infrastructure.repository.DbModel;
+import com.example.springliquidbase.infrastructure.repository.userrepository.UserEntity;
 import io.ebean.ExpressionList;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -80,7 +80,29 @@ public class LanguageRepository {
         return exp;
     }
 
-    public List<List<LanguageModel>> getLanguagesListByDictionaryIds(List<DictionaryModel> dictionaries) {
-        return null;
+    public Map<UUID, List<UUID>> getLanguagesIdsListByDict(Map<UUID, DictionaryModel> dictionaries) {
+        Map<UUID, List<UUID>> languagePairs = new HashMap<>();
+        for (DictionaryModel dictionary : dictionaries.values()) {
+            List<UUID> languages = new ArrayList<>();
+            languages.add(dictionary.getLanguageFrom());
+            languages.add(dictionary.getLanguageTo());
+            languagePairs.put(dictionary.getId(), languages);
+        }
+        return languagePairs;
+    }
+
+    public Map<UUID, List<LanguageModel>> getLanguagesListByDictionaryIds(Map<UUID, List<UUID>> languages) {
+        Map<UUID, List<LanguageModel>> languagesByDictionaryId = new HashMap<>();
+        for (UUID dictionaryId : languages.keySet()) {
+            List<UUID> languageIds = languages.get(dictionaryId);
+            List<LanguageModel> languagesList = new ArrayList<>();
+            for (UUID languageId : languageIds) {
+                LanguageEntity languageEntity = db.getDb().find(LanguageEntity.class, languageId);
+                LanguageModel languageModel = getModel(languageEntity);
+                languagesList.add(languageModel);
+            }
+            languagesByDictionaryId.put(dictionaryId, languagesList);
+        }
+        return languagesByDictionaryId;
     }
 }
