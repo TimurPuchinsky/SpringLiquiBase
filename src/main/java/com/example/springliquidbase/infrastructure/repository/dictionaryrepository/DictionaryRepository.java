@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Repository
@@ -108,12 +109,11 @@ public class DictionaryRepository {
     }
 
     public Map<UUID, DictionaryModel> getDictionariesListById(List<UUID> dictionariesIds) {
-        Map<UUID, DictionaryModel> dictionaryModelMap = new HashMap<>();
-        for (DictionaryEntity dictionary :
-                db.getDb().find(DictionaryEntity.class).where().in(DictionaryEntity.ID, dictionariesIds).findList()) {
-            DictionaryModel model = getModel(dictionary);
-            dictionaryModelMap.put(model.getId(), model);
-        }
+        Map<UUID, DictionaryModel> dictionaryModelMap = db.getDb().find(DictionaryEntity.class)
+                .where().in(DictionaryEntity.ID, dictionariesIds)
+                .query().findStream()
+                .map(this::getModel)
+                .collect(Collectors.toMap(DictionaryModel::getId, Function.identity()));
         return dictionaryModelMap;
     }
 }

@@ -13,15 +13,15 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 public class ServerConfig {
 
-    @Value("${spring.translator.datasource.username}")
+    @Value("${postgres.sql.db-username}")
     private String username;
-    @Value("${spring.translator.datasource.password}")
+    @Value("${postgres.sql.db-password}")
     private String password;
-    @Value("${spring.translator.datasource.url}")
+    @Value("${postgres.sql.db-url}")
     private String url;
-    @Value("${spring.translator.liquibase.change-log}")
+    @Value("${postgres.sql.db-changelog}")
     private String changelog;
-    @Value("${spring.translator.properties.ebean.dbSchema}")
+    @Value("${postgres.sql.db-Schema}")
     private String dbSchema;
 
     public DataSourceConfig datasource(){
@@ -36,7 +36,7 @@ public class ServerConfig {
     @Bean
     public DbModel database(){
         DatabaseConfig cfg = new DatabaseConfig();
-        cfg.setRegister(false);
+        cfg.setRegister(true);
         cfg.setDataSourceConfig(datasource());
         return new DbModel(DatabaseFactory.create(cfg));
     }

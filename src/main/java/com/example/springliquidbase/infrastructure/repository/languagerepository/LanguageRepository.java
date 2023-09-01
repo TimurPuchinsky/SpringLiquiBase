@@ -92,17 +92,14 @@ public class LanguageRepository {
     }
 
     public Map<UUID, List<LanguageModel>> getLanguagesListByDictionaryIds(Map<UUID, List<UUID>> languages) {
-        Map<UUID, List<LanguageModel>> languagesByDictionaryId = new HashMap<>();
-        for (UUID dictionaryId : languages.keySet()) {
-            List<UUID> languageIds = languages.get(dictionaryId);
-            List<LanguageModel> languagesList = new ArrayList<>();
-            for (UUID languageId : languageIds) {
-                LanguageEntity languageEntity = db.getDb().find(LanguageEntity.class, languageId);
-                LanguageModel languageModel = getModel(languageEntity);
-                languagesList.add(languageModel);
-            }
-            languagesByDictionaryId.put(dictionaryId, languagesList);
-        }
+        Map<UUID, List<LanguageModel>> languagesByDictionaryId =
+                languages.keySet().stream().collect(Collectors.toMap(
+                        dictionaryId -> dictionaryId,
+                        dictionaryId -> languages.get(dictionaryId).stream()
+                                .map(languageId -> db.getDb().find(LanguageEntity.class, languageId))
+                                .map(this::getModel)
+                                .collect(Collectors.toList())
+                ));
         return languagesByDictionaryId;
     }
 }

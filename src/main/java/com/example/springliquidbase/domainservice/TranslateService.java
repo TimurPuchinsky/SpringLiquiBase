@@ -118,7 +118,7 @@ public class TranslateService {
             return new SuccessResultModel("NullException", "перевод не нашлелся");
         }
         var finddict = dictionaryService.getDictionaryById(translateAddModel.getDictionaryId());
-        if (findwordto == null) {
+        if (finddict == null) {
             return new SuccessResultModel("NullException", "перевод не нашлелся");
         }
         var changedtranslate = translateRepository.changeTranslate(translateId, findwordfrom.getId(), findwordto.getId(), finddict.getId());

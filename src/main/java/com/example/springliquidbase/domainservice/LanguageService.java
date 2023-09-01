@@ -3,6 +3,7 @@ package com.example.springliquidbase.domainservice;
 import com.example.springliquidbase.domain.common.GuidResultModel;
 import com.example.springliquidbase.domain.common.PageResultModel;
 import com.example.springliquidbase.domain.common.SuccessResultModel;
+import com.example.springliquidbase.domain.dictionary.DictionaryModel;
 import com.example.springliquidbase.domain.language.LanguageModel;
 import com.example.springliquidbase.domain.language.LanguagePageModel;
 import com.example.springliquidbase.infrastructure.repository.languagerepository.LanguageRepository;
@@ -48,9 +49,8 @@ public class LanguageService {
         return languageRepository.getPage(model);
     }
 
-    public Map<UUID, List<LanguageModel>> getLanguagesByDictionaryIds(List<UUID> dictionaries) {
-        var dictionariesList = dictionaryService.getDictionariesById(dictionaries);
-        var languageIds = languageRepository.getLanguagesIdsListByDict(dictionariesList);
+    public Map<UUID, List<LanguageModel>> getLanguagesByDictionaryIds(Map<UUID, DictionaryModel> dictionaries) {
+        var languageIds = languageRepository.getLanguagesIdsListByDict(dictionaries);
         return languageRepository.getLanguagesListByDictionaryIds(languageIds);
     }
 }

@@ -22,13 +22,14 @@ public class JwtGenerator {
     public TokenModel getModel(String token) {
         if (token == null) return null;
         var model = new TokenModel();
-        model.setIssuer(getAllClaimsFromToken(token).getIssuer());
-        model.setAudience(getAllClaimsFromToken(token).getAudience());
-        model.setSubject(getAllClaimsFromToken(token).getSubject());
-        model.setExpiration(getAllClaimsFromToken(token).getExpiration());
+        Claims claims = getAllClaimsFromToken(token);
+        model.setIssuer(claims.getIssuer());
+        model.setAudience(claims.getAudience());
+        model.setSubject(claims.getSubject());
+        model.setExpiration(claims.getExpiration());
         model.setRole(getRoles(token));
-        model.setUserId(UUID.fromString(getAllClaimsFromToken(token).get("userId", String.class)));
-        model.setSessionId(UUID.fromString(getAllClaimsFromToken(token).get("sessionId", String.class)));
+        model.setUserId(UUID.fromString(claims.get("userId", String.class)));
+        model.setSessionId(UUID.fromString(claims.get("sessionId", String.class)));
         return model;
     }
 

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Repository
@@ -169,11 +170,11 @@ public class UserRepository {
     }
 
     public Map<UUID, UserModel> findUsersListById(List<UUID> authorIds) {
-        Map<UUID, UserModel> usersById = new HashMap<>();
-        for (UserEntity userEntity : db.getDb().find(UserEntity.class).where().in(UserEntity.ID, authorIds).findList()) {
-            UserModel userModel = getModel(userEntity);
-            usersById.put(userModel.getId(), userModel);
-        }
-        return usersById;
+        return db.getDb().find(UserEntity.class)
+                .where()
+                .in(UserEntity.ID, authorIds)
+                .query().findStream()
+                .map(this::getModel)
+                .collect(Collectors.toMap(UserModel::getId, Function.identity()));
     }
 }

@@ -2,8 +2,11 @@ package com.example.springliquidbase.domainservice;
 
 import com.example.springliquidbase.domain.common.ExportModel;
 import com.example.springliquidbase.domain.common.PageResultModel;
+import com.example.springliquidbase.domain.dictionary.DictionaryModel;
+import com.example.springliquidbase.domain.language.LanguageModel;
 import com.example.springliquidbase.domain.translate.TranslatePageModel;
 import com.example.springliquidbase.domain.translate.TranslateResultModel;
+import com.example.springliquidbase.domain.user.UserModel;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -31,10 +33,8 @@ public class ExportService {
     private final TranslateService translateService;
     private final UserService userService;
 
-    //count++, пагинация для поиска словарей. в цикле добавляются все значения модели. результат записывать в список/мапу.
-    //какое то обогащение (использование сервисов для составление модели)
-    //собирать id в список и вызывать одним запросом. email юзера. инфо языка (с какого на какой)
 
+    //перевод сервисов, обогащение модели и запись в excel в do/while
     public MultipartFile export() throws IOException {
 
         var translatePageModel = new TranslatePageModel();
@@ -45,52 +45,56 @@ public class ExportService {
         List<ExportModel> exportmodelList = new ArrayList<>();
         List<UUID> authorIds = new ArrayList<>();
         List<UUID> changerIds = new ArrayList<>();
-        List<String> wordsFrom = new ArrayList<>();
-        List<String> wordsTo = new ArrayList<>();
-        List<LocalDateTime> created = new ArrayList<>();
-        List<LocalDateTime> changed = new ArrayList<>();
+        List<TranslateResultModel> pageList = new ArrayList<>();
         List<UUID> dictionariesIds = new ArrayList<>();
+
+        Map<UUID, UserModel> authorsMap;
+        Map<UUID, UserModel> changersMap;
+        Map<UUID, DictionaryModel> dictionariesMap;
+        Map<UUID, List<LanguageModel>> languagesMap;
 
         do {
             page = translateService.getPage(translatePageModel);
             translatePageModel.setPageNum(translatePageModel.getPageNum() + 1);
-            for (var model : page.getList()) {
-                authorIds.add(model.getAuthor_id());
-                changerIds.add(model.getChanger_id());
-                wordsFrom.add(model.getWordStringFrom());
-                wordsTo.add(model.getWordStringTo());
-                created.add(model.getCreated());
-                changed.add(model.getChanged());
-                dictionariesIds.add(model.getDictionary_id());
+            authorIds.addAll(page.getList().stream().map(TranslateResultModel::getAuthor_id).toList());
+            changerIds.addAll(page.getList().stream().map(TranslateResultModel::getChanger_id).toList());
+            dictionariesIds.addAll(page.getList().stream().map(TranslateResultModel::getDictionary_id).toList());
+            pageList.addAll(page.getList());
+
+            authorsMap = userService.getUsersListByIds(authorIds);
+            changersMap = userService.getUsersListByIds(changerIds);
+            dictionariesMap = dictionaryService.getDictionariesById(dictionariesIds);
+            languagesMap = languageService.getLanguagesByDictionaryIds(dictionariesMap);
+
+            for (var pageModel : pageList) {
+                var model = new ExportModel();
+
+                model.setWord_from(pageModel.getWordStringFrom());
+                model.setWord_to(pageModel.getWordStringTo());
+
+                model.setAuthor_fio(
+                        authorsMap.get(pageModel.getAuthor_id()).getSurname() + " " +
+                                authorsMap.get(pageModel.getAuthor_id()).getName() + " " +
+                                authorsMap.get(pageModel.getAuthor_id()).getFather());
+
+                model.setCreated(pageModel.getCreated());
+
+                model.setChanger_fio(
+                        changersMap.get(pageModel.getChanger_id()).getSurname() + " " +
+                                changersMap.get(pageModel.getChanger_id()).getName() + " " +
+                                changersMap.get(pageModel.getChanger_id()).getFather());
+
+                model.setChanged(pageModel.getChanged());
+                model.setAuthor_id(pageModel.getAuthor_id());
+                model.setChanger_id(pageModel.getChanger_id());
+                model.setDictionary_id(pageModel.getDictionary_id());
+                model.setAuthor_email(authorsMap.get(pageModel.getAuthor_id()).getEmail());
+                exportmodelList.add(model);
             }
         } while (page.getList().size() == translatePageModel.getPageSize());
 
         Set<UUID> dictionariesIdsSet = new HashSet<>(dictionariesIds);
         List<UUID> uniqueDictionaries = new ArrayList<>(dictionariesIdsSet);
-
-        var authorsMap = userService.getUsersListByIds(authorIds);
-        var changersMap = userService.getUsersListByIds(changerIds);
-        var dictionariesMap = dictionaryService.getDictionariesById(dictionariesIds);
-        var languagesMap = languageService.getLanguagesByDictionaryIds(dictionariesIds);
-
-        for (int i = 0; i < authorIds.size(); i++) {
-            var model = new ExportModel();
-            model.setWord_from(wordsFrom.get(i));
-            model.setWord_to(wordsTo.get(i));
-            model.setAuthor_fio(authorsMap.get(authorIds.get(i)).getSurname() + " " +
-                    authorsMap.get(authorIds.get(i)).getName() + " " +
-                    authorsMap.get(authorIds.get(i)).getFather());
-            model.setCreated(created.get(i));
-            model.setChanger_fio(changersMap.get(changerIds.get(i)).getSurname() + " " +
-                    changersMap.get(changerIds.get(i)).getName() + " " +
-                    changersMap.get(changerIds.get(i)).getFather());
-            model.setChanged(changed.get(i));
-            model.setAuthor_id(authorIds.get(i));
-            model.setChanger_id(changerIds.get(i));
-            model.setDictionary_id(dictionariesIds.get(i));
-            model.setAuthor_email(authorsMap.get(authorIds.get(i)).getEmail());
-            exportmodelList.add(model);
-        }
 
         var workbook = new XSSFWorkbook();
 
