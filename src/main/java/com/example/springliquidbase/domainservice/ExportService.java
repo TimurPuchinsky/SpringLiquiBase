@@ -7,6 +7,7 @@ import com.example.springliquidbase.domain.language.LanguageModel;
 import com.example.springliquidbase.domain.translate.TranslatePageModel;
 import com.example.springliquidbase.domain.translate.TranslateResultModel;
 import com.example.springliquidbase.domain.user.UserModel;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +34,6 @@ public class ExportService {
     private final TranslateService translateService;
     private final UserService userService;
 
-
     //перевод сервисов, обогащение модели и запись в excel в do/while
     public MultipartFile export() throws IOException {
 
@@ -42,29 +42,24 @@ public class ExportService {
         translatePageModel.setPageSize(100);
         PageResultModel<TranslateResultModel> page;
 
-        List<ExportModel> exportmodelList = new ArrayList<>();
-        List<UUID> authorIds = new ArrayList<>();
-        List<UUID> changerIds = new ArrayList<>();
-        List<TranslateResultModel> pageList = new ArrayList<>();
-        List<UUID> dictionariesIds = new ArrayList<>();
-
-        Map<UUID, UserModel> authorsMap;
-        Map<UUID, UserModel> changersMap;
-        Map<UUID, DictionaryModel> dictionariesMap;
-        Map<UUID, List<LanguageModel>> languagesMap;
+        var outputFile = new File("export1.xlsx");
+        var workbook = new XSSFWorkbook();
 
         do {
             page = translateService.getPage(translatePageModel);
             translatePageModel.setPageNum(translatePageModel.getPageNum() + 1);
-            authorIds.addAll(page.getList().stream().map(TranslateResultModel::getAuthor_id).toList());
-            changerIds.addAll(page.getList().stream().map(TranslateResultModel::getChanger_id).toList());
-            dictionariesIds.addAll(page.getList().stream().map(TranslateResultModel::getDictionary_id).toList());
-            pageList.addAll(page.getList());
 
-            authorsMap = userService.getUsersListByIds(authorIds);
-            changersMap = userService.getUsersListByIds(changerIds);
-            dictionariesMap = dictionaryService.getDictionariesById(dictionariesIds);
-            languagesMap = languageService.getLanguagesByDictionaryIds(dictionariesMap);
+            List<UUID> authorIds = new ArrayList<>(page.getList().stream().map(TranslateResultModel::getAuthor_id).toList());
+            List<UUID> changerIds = new ArrayList<>(page.getList().stream().map(TranslateResultModel::getChanger_id).toList());
+            List<UUID> dictionariesIds = new ArrayList<>(page.getList().stream().map(TranslateResultModel::getDictionary_id).toList());
+            List<TranslateResultModel> pageList = new ArrayList<>(page.getList());
+
+            Map<UUID, UserModel> authorsMap = userService.getUsersListByIds(authorIds);
+            Map<UUID, UserModel> changersMap = userService.getUsersListByIds(changerIds);
+            Map<UUID, DictionaryModel> dictionariesMap = dictionaryService.getDictionariesById(dictionariesIds);
+            Map<UUID, List<LanguageModel>> languagesMap = languageService.getLanguagesByDictionaryIds(dictionariesMap);
+
+            List<ExportModel> exportmodelList = new ArrayList<>();
 
             for (var pageModel : pageList) {
                 var model = new ExportModel();
@@ -90,47 +85,46 @@ public class ExportService {
                 model.setDictionary_id(pageModel.getDictionary_id());
                 model.setAuthor_email(authorsMap.get(pageModel.getAuthor_id()).getEmail());
                 exportmodelList.add(model);
+
+                for (int i = 0; i < dictionariesMap.size(); i++) {
+                    var dictionaryModel = dictionariesMap.get(dictionariesIds.get(i));
+                    XSSFSheet sheet;
+                    if (workbook.getSheet(dictionaryModel.getName()) == null) {
+                        sheet = workbook.createSheet(dictionaryModel.getName());
+                        var headerRow = sheet.createRow(0);
+                        headerRow.createCell(0).setCellValue(languagesMap.get(dictionaryModel.getId()).get(0).getName());
+                        headerRow.createCell(1).setCellValue(languagesMap.get(dictionaryModel.getId()).get(1).getName());
+                        headerRow.createCell(2).setCellValue("Добавил");
+                        headerRow.createCell(3).setCellValue("Дата добавления");
+                        headerRow.createCell(4).setCellValue("Изменил");
+                        headerRow.createCell(5).setCellValue("Дата изменения");
+                        headerRow.createCell(6).setCellValue("Почта создателя");
+                    } else {
+                        sheet = workbook.getSheet(dictionaryModel.getName());
+                    }
+
+                    int rowIndex = sheet.getLastRowNum() + 1;
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+                    for (var exportModel : exportmodelList) {
+                        if (exportModel.getDictionary_id().equals(dictionaryModel.getId())) {
+                            var dataRow = sheet.createRow(rowIndex);
+                            dataRow.createCell(0).setCellValue(exportModel.getWord_from());
+                            dataRow.createCell(1).setCellValue(exportModel.getWord_to());
+                            dataRow.createCell(2).setCellValue(exportModel.getAuthor_fio());
+                            dataRow.createCell(3).setCellValue(exportModel.getCreated().format(formatter));
+                            dataRow.createCell(4).setCellValue(exportModel.getChanger_fio());
+                            dataRow.createCell(5).setCellValue(exportModel.getChanged().format(formatter));
+                            dataRow.createCell(6).setCellValue(exportModel.getAuthor_email());
+                            rowIndex++;
+                        }
+                    }
+                }
+                exportmodelList.clear();
             }
         } while (page.getList().size() == translatePageModel.getPageSize());
 
-        Set<UUID> dictionariesIdsSet = new HashSet<>(dictionariesIds);
-        List<UUID> uniqueDictionaries = new ArrayList<>(dictionariesIdsSet);
-
-        var workbook = new XSSFWorkbook();
-
-        for (int i = 0; i < dictionariesMap.size(); i++) {
-            var model = dictionariesMap.get(uniqueDictionaries.get(i));
-            var sheet = workbook.createSheet(model.getName());
-            var headerRow = sheet.createRow(0);
-            headerRow.createCell(0).setCellValue(languagesMap.get(model.getId()).get(0).getName());
-            headerRow.createCell(1).setCellValue(languagesMap.get(model.getId()).get(1).getName());
-            headerRow.createCell(2).setCellValue("Добавил");
-            headerRow.createCell(3).setCellValue("Дата добавления");
-            headerRow.createCell(4).setCellValue("Изменил");
-            headerRow.createCell(5).setCellValue("Дата изменения");
-            headerRow.createCell(6).setCellValue("Почта создателя");
-
-            int rowIndex = 1;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-            for (var exportModel : exportmodelList) {
-                if (exportModel.getDictionary_id().equals(model.getId())) {
-                    var dataRow = sheet.createRow(rowIndex);
-                    dataRow.createCell(0).setCellValue(exportModel.getWord_from());
-                    dataRow.createCell(1).setCellValue(exportModel.getWord_to());
-                    dataRow.createCell(2).setCellValue(exportModel.getAuthor_fio());
-                    dataRow.createCell(3).setCellValue(exportModel.getCreated().format(formatter));
-                    dataRow.createCell(4).setCellValue(exportModel.getChanger_fio());
-                    dataRow.createCell(5).setCellValue(exportModel.getChanged().format(formatter));
-                    dataRow.createCell(6).setCellValue(exportModel.getAuthor_email());
-                    rowIndex++;
-                }
-            }
-        }
-
-        var outputFile = new File("export.xlsx");
         var outputStream = new FileOutputStream(outputFile);
         workbook.write(outputStream);
-
         outputStream.close();
         workbook.close();
 
